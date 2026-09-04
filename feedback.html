@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diety Attendance Form</title>
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 10px;
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Outer wrapper controls responsiveness */
+    .app-wrapper {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding-top: 0px;
+    }
+
+    /* Container clips the Google Apps Script top banner */
+    .app-container {
+      position: relative;
+      width: 100%;
+      height: 750px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    /* -22px removes the Google banner without cutting off your form header */
+    .app-container iframe {
+      position: absolute;
+      top: 0px;
+      left: 0;
+      width: 100%;
+      height: calc(100% + 22px);
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <div class="app-container">
+      <iframe src="https://script.google.com/macros/s/AKfycbwJFftSBq9Gb4qXibm91hp7aXn8TJ2ldmvuW8ArRWmClEUEwVeTwoh8vJtLStTRIGGw/exec"></iframe>
+    </div>
+  </div>
+
+</body>
+</html>
+
