@@ -10,8 +10,8 @@
     }
     body {
       margin: 0;
-      padding: 16px;
-      background-color: #f4f6f9;
+      padding: 20px 10px;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,124 +19,240 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Outer wrapper controls responsiveness */
+    /* Main Responsive Card */
     .app-wrapper {
       width: 100%;
       max-width: 480px;
       background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
       overflow: hidden;
-      border: 1px solid #eaeaea;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Restaurant Header */
+    /* Restaurant Header with Gradient */
     .restaurant-header {
-      background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+      background: linear-gradient(135deg, #111111 0%, #292929 100%);
       color: #ffffff;
-      padding: 32px 24px;
+      padding: 30px 20px;
       text-align: center;
+      position: relative;
     }
 
     .restaurant-header h1 {
       margin: 0;
-      font-size: 26px;
-      letter-spacing: 1px;
-      color: #f8b400; /* Warm Accent Color */
+      font-size: 28px;
+      letter-spacing: 1.5px;
+      color: #ffb703;
       text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .restaurant-header p {
       margin: 6px 0 0;
-      font-size: 14px;
-      color: #cccccc;
+      font-size: 13px;
+      color: #dddddd;
+      letter-spacing: 0.5px;
     }
 
-    /* Container for menu actions */
+    /* Floating Emoji Banner */
+    .emoji-banner {
+      display: flex;
+      justify-content: space-around;
+      font-size: 24px;
+      padding: 10px 0;
+      background: #fff8f0;
+      border-bottom: 1px solid #ffe5d9;
+    }
+
+    .floating-emoji {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-emoji:nth-child(2) { animation-delay: 0.5s; }
+    .floating-emoji:nth-child(3) { animation-delay: 1s; }
+    .floating-emoji:nth-child(4) { animation-delay: 1.5s; }
+    .floating-emoji:nth-child(5) { animation-delay: 2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Main Body Area */
     .app-container {
-      padding: 28px 20px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
-    /* Interactive Link Buttons */
+    /* Section Title */
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #444;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Food Gallery Grid */
+    .food-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .food-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 110px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .food-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .food-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .food-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      color: #ffffff;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Action Buttons */
+    .action-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 5px;
+    }
+
     .btn-link {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 16px 20px;
+      padding: 16px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       text-decoration: none;
-      border-radius: 10px;
-      transition: all 0.2s ease-in-out;
-      text-align: center;
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     /* Submit Attendance Button */
     .btn-attendance {
-      background-color: #2e7d32;
+      background: linear-gradient(135deg, #2e7d32, #4caf50);
       color: #ffffff;
-      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
     }
 
     .btn-attendance:hover {
-      background-color: #256428;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(46, 125, 50, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(46, 125, 50, 0.4);
     }
 
-    /* Give Your Feedback Button */
+    /* Give Feedback Button */
     .btn-feedback {
-      background-color: #1976d2;
+      background: linear-gradient(135deg, #1565c0, #42a5f5);
       color: #ffffff;
-      box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);
     }
 
     .btn-feedback:hover {
-      background-color: #1565c0;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(21, 101, 192, 0.4);
     }
 
-    /* Active click effect */
-    .btn-link:active {
-      transform: translateY(0);
-    }
-
-    /* Footer branding */
     .footer-text {
       text-align: center;
       font-size: 12px;
-      color: #888888;
-      margin-top: 12px;
+      color: #777777;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
 
   <div class="app-wrapper">
-    <!-- Header Section -->
+    <!-- Header -->
     <div class="restaurant-header">
       <h1>MCF Restaurant</h1>
-      <p>Staff Portal & Customer Portal</p>
+      <p>Delicious Indian & Chinese Cuisine 🍛🥟</p>
     </div>
 
-    <!-- Action Links -->
-    <div class="app-container">
-      <a href="attendance.html" class="btn-link btn-attendance">
-        📋 Submit Attendance
-      </a>
+    <!-- Floating Emojis -->
+    <div class="emoji-banner">
+      <span class="floating-emoji">🥟</span>
+      <span class="floating-emoji">🍲</span>
+      <span class="floating-emoji">🍛</span>
+      <span class="floating-emoji">🍜</span>
+      <span class="floating-emoji">🫓</span>
+    </div>
 
-      <a href="feedback.html" class="btn-link btn-feedback">
-        ⭐ Give Your Feedback
-      </a>
+    <div class="app-container">
+      
+      <!-- Food Showcase -->
+      <div>
+        <div class="section-title">
+          <span>🔥 Our Special Menu</span>
+        </div>
+        <div class="food-gallery">
+          <!-- Indian Food -->
+          <div class="food-card">
+            <img src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=500&q=80" alt="Indian Thali">
+            <div class="food-label">
+              <span>Indian Delights</span>
+              <span>🍛</span>
+            </div>
+          </div>
+          <!-- Chinese Food -->
+          <div class="food-card">
+            <img src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=500&q=80" alt="Chinese Noodles">
+            <div class="food-label">
+              <span>Chinese Special</span>
+              <span>🥟</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-section">
+        <a href="attendance.html" class="btn-link btn-attendance">
+          📋 Submit Attendance
+        </a>
+
+        <a href="feedback.html" class="btn-link btn-feedback">
+          ⭐ Give Your Feedback
+        </a>
+      </div>
 
       <div class="footer-text">
-        Welcome to MCF Restaurant Portal
+        Welcome to MCF Restaurant Portal ✨
       </div>
+
     </div>
   </div>
 
