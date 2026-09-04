@@ -5,34 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diety Attendance Form</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
-      padding: 0;
+      padding: 10px;
       background-color: #f4f6f9;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
     }
+
+    /* Outer wrapper controls mobile responsiveness */
+    .app-wrapper {
+      width: 100%;
+      max-width: 500px; /* Adjusts nicely on mobile and desktop */
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding-top: 15px; /* Adds space above the form so content isn't cut off */
+    }
+
+    /* Container clips the Google Apps Script top banner */
     .app-container {
       position: relative;
       width: 100%;
-      max-width: 600px;
-      height: 900px;
+      height: 780px; /* High enough to fit the entire form without extra scrollbars */
       overflow: hidden;
+      border-radius: 8px;
     }
+
+    /* Shifts the iframe up to hide the ~50px banner */
     .app-container iframe {
       position: absolute;
-      top: -50px;
+      top: -42px; /* Fine-tuned so title "Submit Your Attendance" stays intact */
       left: 0;
       width: 100%;
-      height: calc(100% + 50px);
+      height: calc(100% + 42px);
       border: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <iframe src="https://script.google.com/macros/s/AKfycbyrsGT2pmrOg6k9H-SCtquCa6mT5JPZg90EiT0wQHxEizvgbjEWUJaq6oYAPhWxfvM/exec"></iframe>
+  <div class="app-wrapper">
+    <div class="app-container">
+      <iframe src="https://script.google.com/macros/s/AKfycbyrsGT2pmrOg6k9H-SCtquCa6mT5JPZg90EiT0wQHxEizvgbjEWUJaq6oYAPhWxfvM/exec"></iframe>
+    </div>
   </div>
 
 </body>
