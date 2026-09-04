@@ -3,57 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diety Attendance Form</title>
-<style>
+  <title>MCF Restaurant</title>
+  <style>
     * {
       box-sizing: border-box;
     }
     body {
       margin: 0;
-      padding: 10px;
+      padding: 16px;
       background-color: #f4f6f9;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     /* Outer wrapper controls responsiveness */
     .app-wrapper {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      padding-top: 0px;
-    }
-
-    /* Container clips the Google Apps Script top banner */
-    .app-container {
-      position: relative;
-      width: 100%;
-      height: 750px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
       overflow: hidden;
-      border-radius: 8px;
+      border: 1px solid #eaeaea;
     }
 
-    /* -22px removes the Google banner without cutting off your form header */
-    .app-container iframe {
-      position: absolute;
-      top: 0px;
-      left: 0;
-      width: 100%;
-      height: calc(100% + 22px);
-      border: none;
+    /* Restaurant Header */
+    .restaurant-header {
+      background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+      color: #ffffff;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .restaurant-header h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 1px;
+      color: #f8b400; /* Warm Accent Color */
+      text-transform: uppercase;
+    }
+
+    .restaurant-header p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: #cccccc;
+    }
+
+    /* Container for menu actions */
+    .app-container {
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Interactive Link Buttons */
+    .btn-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease-in-out;
+      text-align: center;
+    }
+
+    /* Submit Attendance Button */
+    .btn-attendance {
+      background-color: #2e7d32;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+    }
+
+    .btn-attendance:hover {
+      background-color: #256428;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(46, 125, 50, 0.3);
+    }
+
+    /* Give Your Feedback Button */
+    .btn-feedback {
+      background-color: #1976d2;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);
+    }
+
+    .btn-feedback:hover {
+      background-color: #1565c0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3);
+    }
+
+    /* Active click effect */
+    .btn-link:active {
+      transform: translateY(0);
+    }
+
+    /* Footer branding */
+    .footer-text {
+      text-align: center;
+      font-size: 12px;
+      color: #888888;
+      margin-top: 12px;
     }
   </style>
 </head>
 <body>
+
   <div class="app-wrapper">
-    <a href="feedback.html">Give Your Feedback</a>
+    <!-- Header Section -->
+    <div class="restaurant-header">
+      <h1>MCF Restaurant</h1>
+      <p>Staff Portal & Customer Portal</p>
+    </div>
+
+    <!-- Action Links -->
     <div class="app-container">
-      My Frame
+      <a href="attendance.html" class="btn-link btn-attendance">
+        📋 Submit Attendance
+      </a>
+
+      <a href="feedback.html" class="btn-link btn-feedback">
+        ⭐ Give Your Feedback
+      </a>
+
+      <div class="footer-text">
+        Welcome to MCF Restaurant Portal
+      </div>
     </div>
   </div>
 
