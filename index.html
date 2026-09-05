@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MCF Restaurant</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
@@ -30,18 +32,17 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Restaurant Header with Gradient */
+    /* Restaurant Header */
     .restaurant-header {
       background: linear-gradient(135deg, #111111 0%, #292929 100%);
       color: #ffffff;
-      padding: 30px 20px;
+      padding: 25px 20px;
       text-align: center;
-      position: relative;
     }
 
     .restaurant-header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 26px;
       letter-spacing: 1.5px;
       color: #ffb703;
       text-transform: uppercase;
@@ -52,15 +53,14 @@
       margin: 6px 0 0;
       font-size: 13px;
       color: #dddddd;
-      letter-spacing: 0.5px;
     }
 
     /* Floating Emoji Banner */
     .emoji-banner {
       display: flex;
       justify-content: space-around;
-      font-size: 24px;
-      padding: 10px 0;
+      font-size: 22px;
+      padding: 8px 0;
       background: #fff8f0;
       border-bottom: 1px solid #ffe5d9;
     }
@@ -68,7 +68,6 @@
     .floating-emoji {
       animation: float 3s ease-in-out infinite;
     }
-
     .floating-emoji:nth-child(2) { animation-delay: 0.5s; }
     .floating-emoji:nth-child(3) { animation-delay: 1s; }
     .floating-emoji:nth-child(4) { animation-delay: 1.5s; }
@@ -76,7 +75,7 @@
 
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-6px); }
     }
 
     /* Main Body Area */
@@ -84,15 +83,13 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
     }
 
-    /* Section Title */
     .section-title {
       font-size: 15px;
       font-weight: 700;
       color: #444;
-      margin-bottom: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       display: flex;
@@ -100,45 +97,206 @@
       gap: 8px;
     }
 
-    /* Food Gallery Grid */
-    .food-gallery {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .food-card {
+    /* CAROUSEL SLIDER STYLES */
+    .slider-container {
       position: relative;
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
-      height: 110px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
     }
 
-    .food-card img {
+    .slides-wrapper {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 100%;
+    }
+
+    .slide {
+      min-width: 100%;
+      height: 180px;
+      position: relative;
+    }
+
+    .slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.4s ease;
     }
 
-    .food-card:hover img {
-      transform: scale(1.1);
-    }
-
-    .food-label {
+    .slide-label {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
       background: linear-gradient(transparent, rgba(0,0,0,0.85));
       color: #ffffff;
-      padding: 8px 10px;
-      font-size: 12px;
+      padding: 12px 15px;
+      font-size: 14px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    /* Slider Nav Buttons */
+    .prev-btn, .next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      cursor: pointer;
+      border-radius: 50%;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .prev-btn:hover, .next-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
+    .prev-btn { left: 10px; }
+    .next-btn { right: 10px; }
+
+    /* Dots Indicator */
+    .dots-container {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ccc;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .dot.active {
+      background-color: #ffb703;
+      width: 18px;
+      border-radius: 10px;
+    }
+
+    /* SIDE-BY-SIDE BUTTON ROW */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .menu-toggle-btn {
+      flex: 1;
+      background: #333333;
+      color: #ffffff;
+      border: none;
+      padding: 12px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.3s;
+    }
+
+    .menu-toggle-btn:hover {
+      background: #111111;
+    }
+
+    .order-btn {
+      flex: 1;
+      background: linear-gradient(135deg, #d32f2f, #f44336);
+      color: #ffffff;
+      border: none;
+      padding: 12px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(211, 47, 47, 0.25);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .order-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(211, 47, 47, 0.35);
+    }
+
+    /* DISHES LIST CONTAINER WITH PRICES */
+    .menu-list-container {
+      display: none;
+      background: #fdfdfd;
+      border-radius: 12px;
+      padding: 12px 14px;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    .category-title {
+      font-weight: 700;
+      color: #2e7d32;
+      margin-top: 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      border-bottom: 2px solid #e8f5e9;
+      padding-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .category-title:first-child {
+      margin-top: 0;
+    }
+
+    .dish-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px dashed #f0f0f0;
+      font-size: 12px;
+    }
+
+    .dish-name {
+      color: #333;
+      font-weight: 500;
+      flex: 1;
+      padding-right: 8px;
+    }
+
+    .dish-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .size-badge {
+      background: #eef2f6;
+      color: #666;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .dish-price {
+      font-weight: 700;
+      color: #d32f2f;
+      min-width: 42px;
+      text-align: right;
     }
 
     /* Action Buttons */
@@ -146,7 +304,6 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 5px;
     }
 
     .btn-link {
@@ -154,42 +311,89 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 16px;
-      font-size: 16px;
+      padding: 15px;
+      font-size: 15px;
       font-weight: 700;
       text-decoration: none;
       border-radius: 12px;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
-    /* Submit Attendance Button */
     .btn-attendance {
       background: linear-gradient(135deg, #2e7d32, #4caf50);
       color: #ffffff;
     }
 
     .btn-attendance:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(46, 125, 50, 0.4);
+      transform: translateY(-2px);
     }
 
-    /* Give Feedback Button */
     .btn-feedback {
       background: linear-gradient(135deg, #1565c0, #42a5f5);
       color: #ffffff;
     }
 
     .btn-feedback:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(21, 101, 192, 0.4);
+      transform: translateY(-2px);
     }
 
-    .footer-text {
+    /* FOOTER & SOCIAL ICON STYLES */
+    .app-footer {
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      padding: 18px 15px;
       text-align: center;
+    }
+
+    .footer-title {
       font-size: 12px;
-      color: #777777;
-      margin-top: 5px;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .social-icons-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .social-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 18px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+
+    /* Brand & Utility Background Colors */
+    .btn-whatsapp { background: #25D366; }
+    .btn-phone { background: #007bf5; }
+    .btn-map { background: #ea4335; }
+    .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+    .btn-facebook { background: #1877F2; }
+    .btn-threads { background: #ffffff; color: #000000; }
+
+    .footer-copy {
+      margin-top: 14px;
+      font-size: 11px;
+      color: #888888;
     }
   </style>
 </head>
@@ -207,35 +411,194 @@
       <span class="floating-emoji">🥟</span>
       <span class="floating-emoji">🍲</span>
       <span class="floating-emoji">🍛</span>
-      <span class="floating-emoji">🍜</span>
-      <span class="floating-emoji">🫓</span>
+      <span class="floating-emoji">🍕</span>
+      <span class="floating-emoji">🍹</span>
     </div>
 
     <div class="app-container">
       
-      <!-- Food Showcase -->
+      <!-- SPECIAL MENU SLIDER -->
       <div>
         <div class="section-title">
-          <span>🔥 Our Special Menu</span>
+          <span>🔥 Our Special Menu Highlights</span>
         </div>
-        <div class="food-gallery">
-          <!-- Indian Food -->
-          <div class="food-card">
-            <img src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=500&q=80" alt="Indian Thali">
-            <div class="food-label">
-              <span>Indian Delights</span>
-              <span>🍛</span>
+        
+        <div class="slider-container">
+          <div class="slides-wrapper" id="slidesWrapper">
+            <!-- Slide 1: Indian Delights -->
+            <div class="slide">
+              <img src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80" alt="Indian Delights">
+              <div class="slide-label">
+                <span>Indian Delights (Thali, Paneer, Dal)</span>
+                <span>🍛</span>
+              </div>
+            </div>
+            <!-- Slide 2: Chinese Special -->
+            <div class="slide">
+              <img src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80" alt="Chinese Special">
+              <div class="slide-label">
+                <span>Chinese Special (Noodles, Rice, Manchurian)</span>
+                <span>🥟</span>
+              </div>
+            </div>
+            <!-- Slide 3: Pizzas & Burgers -->
+            <div class="slide">
+              <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80" alt="Pizza & Burgers">
+              <div class="slide-label">
+                <span>Pizzas, Burgers & Rolls</span>
+                <span>🍕</span>
+              </div>
+            </div>
+            <!-- Slide 4: Drinks & Mocktails -->
+            <div class="slide">
+              <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80" alt="Beverages">
+              <div class="slide-label">
+                <span>Mojitos, Shakes & Teas</span>
+                <span>🍹</span>
+              </div>
+            </div>
+            <!-- Slide 5: Soups & Desserts -->
+            <div class="slide">
+              <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80" alt="Desserts & Soups">
+              <div class="slide-label">
+                <span>Soups, Gulab Jamun & Ice Cream</span>
+                <span>🍨</span>
+              </div>
             </div>
           </div>
-          <!-- Chinese Food -->
-          <div class="food-card">
-            <img src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=500&q=80" alt="Chinese Noodles">
-            <div class="food-label">
-              <span>Chinese Special</span>
-              <span>🥟</span>
-            </div>
-          </div>
+
+          <!-- Slider Controls -->
+          <button class="prev-btn" onclick="moveSlide(-1)">❮</button>
+          <button class="next-btn" onclick="moveSlide(1)">❯</button>
         </div>
+
+        <!-- Slider Dots -->
+        <div class="dots-container">
+          <span class="dot active" onclick="currentSlide(0)"></span>
+          <span class="dot" onclick="currentSlide(1)"></span>
+          <span class="dot" onclick="currentSlide(2)"></span>
+          <span class="dot" onclick="currentSlide(3)"></span>
+          <span class="dot" onclick="currentSlide(4)"></span>
+        </div>
+      </div>
+
+      <!-- SIDE-BY-SIDE BUTTON ROW -->
+      <div class="btn-row">
+        <button class="menu-toggle-btn" onclick="toggleMenuList()">📖 View Menu (70+ Items)</button>
+        <a href="#" class="order-btn">🛒 Order Now</a>
+      </div>
+
+      <!-- FULL DISHES DROPDOWN LIST WITH SIZE AND PRICE -->
+      <div class="menu-list-container" id="menuList">
+        
+        <div class="category-title">🍵 Soups</div>
+        <div class="dish-row"><span class="dish-name">Hot & Sour Soup</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹70</span></div></div>
+        <div class="dish-row"><span class="dish-name">Manchow Soup</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹80</span></div></div>
+
+        <div class="category-title">🍹 Beverages & Shakes</div>
+        <div class="dish-row"><span class="dish-name">Virgin Mojito</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Blue Lagoon</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Blue Ocean</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Pina Colada</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹125</span></div></div>
+        <div class="dish-row"><span class="dish-name">Cold Coffee</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chocolate Shake</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Oreo Shake</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Kitkat Shake</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Orange Shake</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Strawberry Shake</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Regular Tea</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹40</span></div></div>
+        <div class="dish-row"><span class="dish-name">Regular Coffee</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹50</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chocolate Coffee</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹60</span></div></div>
+        <div class="dish-row"><span class="dish-name">Green Tea</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹70</span></div></div>
+        <div class="dish-row"><span class="dish-name">Black Tea</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹50</span></div></div>
+        <div class="dish-row"><span class="dish-name">Hot Chocolate</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹80</span></div></div>
+
+        <div class="category-title">🍟 Chinese Starters & Noodles</div>
+        <div class="dish-row"><span class="dish-name">French Fries</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹70</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chilly Potato</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Honey Chilly Potato</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chilly Mushroom</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Manchurian</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Manchurian</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chilly Paneer</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Garlic Paneer</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹160</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Salt & Pepper</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹160</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Noodles</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹70</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Hakka Noodles</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Chilly Garlic Noodles</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Noodles</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Egg Noodles</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+
+        <div class="category-title">🍚 Rice & Pulao</div>
+        <div class="dish-row"><span class="dish-name">Veg. Fried Rice</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹70</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Fried Rice</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Hakka Fried Rice</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Egg Fried Rice</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+        <div class="dish-row"><span class="dish-name">Tawa Pulao</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Corn Tawa Pulao</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Tawa Pulao</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+
+        <div class="category-title">🍕 Pizzas, Burgers & Rolls</div>
+        <div class="dish-row"><span class="dish-name">Veg. Spring Rolls</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Roll</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Egg Roll</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Sandwich</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹60</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Tikki Sandwich</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹80</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chilly Paneer Sandwich</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Cheese Sandwich</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Mexican Pizza</span><div class="dish-meta"><span class="size-badge">Small</span><span class="dish-price">₹109</span></div></div>
+        <div class="dish-row"><span class="dish-name">Mexican Pizza</span><div class="dish-meta"><span class="size-badge">Medium</span><span class="dish-price">₹160</span></div></div>
+        <div class="dish-row"><span class="dish-name">Margherita Pizza</span><div class="dish-meta"><span class="size-badge">Small</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Margherita Pizza</span><div class="dish-meta"><span class="size-badge">Medium</span><span class="dish-price">₹145</span></div></div>
+        <div class="dish-row"><span class="dish-name">Double Cheese Pizza</span><div class="dish-meta"><span class="size-badge">Small</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Double Cheese Pizza</span><div class="dish-meta"><span class="size-badge">Medium</span><span class="dish-price">₹170</span></div></div>
+        <div class="dish-row"><span class="dish-name">Onion Capsicum Pizza</span><div class="dish-meta"><span class="size-badge">Small</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Onion Capsicum Pizza</span><div class="dish-meta"><span class="size-badge">Medium</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Corn & Paneer Pizza</span><div class="dish-meta"><span class="size-badge">Small</span><span class="dish-price">₹109</span></div></div>
+        <div class="dish-row"><span class="dish-name">Corn & Paneer Pizza</span><div class="dish-meta"><span class="size-badge">Medium</span><span class="dish-price">₹160</span></div></div>
+        <div class="dish-row"><span class="dish-name">Fresh Veggie Pizza</span><div class="dish-meta"><span class="size-badge">Small</span><span class="dish-price">₹105</span></div></div>
+        <div class="dish-row"><span class="dish-name">Fresh Veggie Pizza</span><div class="dish-meta"><span class="size-badge">Medium</span><span class="dish-price">₹145</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Burger</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹60</span></div></div>
+        <div class="dish-row"><span class="dish-name">Cheese Burger</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹80</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Burger</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹80</span></div></div>
+
+        <div class="category-title">🍛 Indian Main Course (Sabzi & Dal)</div>
+        <div class="dish-row"><span class="dish-name">Dal Fry</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹80</span></div></div>
+        <div class="dish-row"><span class="dish-name">Dal Fry</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+        <div class="dish-row"><span class="dish-name">Dal Tadka</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Dal Tadka</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Punch Dal</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Punch Dal</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Dal Makhani</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Dal Makhani</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹160</span></div></div>
+        <div class="dish-row"><span class="dish-name">Shahi Paneer</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹109</span></div></div>
+        <div class="dish-row"><span class="dish-name">Shahi Paneer</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹190</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Butter Masala</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Paneer Butter Masala</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹200</span></div></div>
+        <div class="dish-row"><span class="dish-name">Kadhai Paneer</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Kadhai Paneer</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹200</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Gobhi</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹80</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Gobhi</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Jeera</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹80</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Jeera</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹140</span></div></div>
+        <div class="dish-row"><span class="dish-name">Mix Veg</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹109</span></div></div>
+        <div class="dish-row"><span class="dish-name">Mix Veg</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹180</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Matar</span><div class="dish-meta"><span class="size-badge">Half</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Aloo Matar</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹160</span></div></div>
+
+        <div class="category-title">🥗 Raita, Salad, Combos & Desserts</div>
+        <div class="dish-row"><span class="dish-name">Mix Raita</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹100</span></div></div>
+        <div class="dish-row"><span class="dish-name">Boondi Raita</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Pineapple Raita</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+        <div class="dish-row"><span class="dish-name">Green Salad</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹90</span></div></div>
+        <div class="dish-row"><span class="dish-name">Cucumber Salad</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹70</span></div></div>
+        <div class="dish-row"><span class="dish-name">Gulab Jamun</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹40</span></div></div>
+        <div class="dish-row"><span class="dish-name">Ice Cream</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹50</span></div></div>
+        <div class="dish-row"><span class="dish-name">Veg. Thali Special</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹220</span></div></div>
+        <div class="dish-row"><span class="dish-name">Manchurian with Rice</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+        <div class="dish-row"><span class="dish-name">Chilly Paneer with Rice</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹130</span></div></div>
+        <div class="dish-row"><span class="dish-name">Pizza with Cold Drinks</span><div class="dish-meta"><span class="size-badge">Full</span><span class="dish-price">₹120</span></div></div>
+
       </div>
 
       <!-- Action Buttons -->
@@ -249,12 +612,80 @@
         </a>
       </div>
 
-      <div class="footer-text">
+    </div>
+
+    <!-- FOOTER WITH CONNECT & SOCIAL ICONS -->
+    <div class="app-footer">
+      <div class="footer-title">Connect & Reach Us</div>
+      <div class="social-icons-grid">
+        <!-- WhatsApp -->
+        <a href="https://wa.me/910000000000" target="_blank" class="social-btn btn-whatsapp" title="WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <!-- Call/Phone -->
+        <a href="tel:+910000000000" class="social-btn btn-phone" title="Call Us">
+          <i class="fa-solid fa-phone"></i>
+        </a>
+        <!-- Map/Location -->
+        <a href="https://maps.app.goo.gl/Ri8aLVVbJmvViQPb6" target="_blank" class="social-btn btn-map" title="Google Maps Location">
+          <i class="fa-solid fa-location-dot"></i>
+        </a>
+        <!-- Instagram -->
+        <a href="https://instagram.com" target="_blank" class="social-btn btn-instagram" title="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <!-- Facebook -->
+        <a href="https://facebook.com" target="_blank" class="social-btn btn-facebook" title="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+      </div>
+      <div class="footer-copy">
         Welcome to MCF Restaurant Portal ✨
       </div>
-
     </div>
+
   </div>
+
+  <script>
+    let currentIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const slidesWrapper = document.getElementById('slidesWrapper');
+
+    function showSlide(index) {
+      if (index >= slides.length) currentIndex = 0;
+      else if (index < 0) currentIndex = slides.length - 1;
+      else currentIndex = index;
+
+      slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+      dots.forEach(dot => dot.classList.remove('active'));
+      dots[currentIndex].classList.add('active');
+    }
+
+    function moveSlide(step) {
+      showSlide(currentIndex + step);
+    }
+
+    function currentSlide(index) {
+      showSlide(index);
+    }
+
+    // Auto-play Slider every 3.5 seconds
+    setInterval(() => {
+      moveSlide(1);
+    }, 3500);
+
+    // Toggle Menu List
+    function toggleMenuList() {
+      const menuList = document.getElementById('menuList');
+      if (menuList.style.display === 'block') {
+        menuList.style.display = 'none';
+      } else {
+        menuList.style.display = 'block';
+      }
+    }
+  </script>
 
 </body>
 </html>
