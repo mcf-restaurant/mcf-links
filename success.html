@@ -71,7 +71,7 @@
 
       const user = JSON.parse(userDataStr);
 
-      document.getElementById("welcomeMsg").innerText = `Welcome, ${user.userName}!`;
+      document.getElementById("welcomeMsg").innerText = `Welcome, ${user.fullName}!`;
       document.getElementById("displayUserID").innerText = user.userID || 'N/A';
       document.getElementById("displayFullName").innerText = user.fullName || 'N/A';
       document.getElementById("displayUserName").innerText = user.userName || 'N/A';
