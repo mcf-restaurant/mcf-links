@@ -307,12 +307,13 @@
     }
 
     .btn-link {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 15px;
-      font-size: 15px;
+      gap: 8px;
+      padding: 14px 10px;
+      font-size: 13px;
       font-weight: 700;
       text-decoration: none;
       border-radius: 12px;
@@ -335,6 +336,24 @@
     }
 
     .btn-feedback:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-account {
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+      color: #ffffff;
+    }
+
+    .btn-account:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-login {
+      background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+      color: #ffffff;
+    }
+
+    .btn-login:hover {
       transform: translateY(-2px);
     }
 
@@ -388,7 +407,6 @@
     .btn-map { background: #ea4335; }
     .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
     .btn-facebook { background: #1877F2; }
-    .btn-threads { background: #ffffff; color: #000000; }
 
     .footer-copy {
       margin-top: 14px;
@@ -427,7 +445,7 @@
           <div class="slides-wrapper" id="slidesWrapper">
             <!-- Slide 01: Rules & Regulations -->
             <div class="slide">
-              <img src="rule-regulation-points.png" alt="rule-regulations">
+              <img src="rule-regulation-points.png" alt="Indian Delights">
               <div class="slide-label">
                 <span>Rules & Regulations</span>
                 <span>🍛</span>
@@ -435,7 +453,7 @@
             </div>
             <!-- Slide 02: Lunch-Dinner Menu -->
             <div class="slide">
-              <img src="lunch-dinner-menu.png" alt="lunch-dinner-menu">
+              <img src="lunch-dinner-menu.png" alt="Indian Delights">
               <div class="slide-label">
                 <span>Lunch & Dinner Menu</span>
                 <span>🍛</span>
@@ -628,6 +646,17 @@
         <a href="feedback.html" class="btn-link btn-feedback">
           ⭐ Give Your Feedback
         </a>
+
+        <!-- Parallel Account & Login Row -->
+        <div class="btn-row">
+          <a href="create_account.html" class="btn-link btn-account">
+            👤 Create Account
+          </a>
+
+          <a href="login.html" class="btn-link btn-login">
+            🔑 Login
+          </a>
+        </div>
       </div>
 
     </div>
@@ -637,11 +666,11 @@
       <div class="footer-title">Connect & Reach Us</div>
       <div class="social-icons-grid">
         <!-- WhatsApp -->
-        <a href="https://wa.me/918429849397" target="_blank" class="social-btn btn-whatsapp" title="WhatsApp">
+        <a href="https://wa.me/910000000000" target="_blank" class="social-btn btn-whatsapp" title="WhatsApp">
           <i class="fa-brands fa-whatsapp"></i>
         </a>
         <!-- Call/Phone -->
-        <a href="tel:+918429849397" class="social-btn btn-phone" title="Call Us">
+        <a href="tel:+910000000000" class="social-btn btn-phone" title="Call Us">
           <i class="fa-solid fa-phone"></i>
         </a>
         <!-- Map/Location -->
