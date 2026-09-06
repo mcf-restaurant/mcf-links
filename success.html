@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MCF Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 480px; padding: 32px; text-align: center; }
+    .welcome-header { color: #f59e0b; font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #94a3b8; font-size: 0.95rem; margin-bottom: 24px; }
+    .details-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 20px; }
+    .detail-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e293b; }
+    .detail-item:last-child { border-bottom: none; }
+    .label { color: #94a3b8; font-size: 0.85rem; }
+    .value { color: #f8fafc; font-weight: 600; font-size: 0.9rem; }
+    
+    /* View Data Link Styles */
+    .view-data-btn { display: none; width: 100%; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 600; border-radius: 8px; padding: 12px; font-size: 0.95rem; margin-bottom: 16px; text-align: center; transition: background 0.2s; }
+    .view-data-btn:hover { background: #1d4ed8; }
+
+    .logout-btn { width: 100%; background: #ef4444; color: #fff; font-weight: 600; border: none; border-radius: 8px; padding: 12px; font-size: 0.95rem; cursor: pointer; transition: opacity 0.2s; }
+    .logout-btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1 class="welcome-header" id="welcomeMsg">Welcome!</h1>
+    <p class="subtitle">You have successfully authenticated with MCF Restaurant.</p>
+
+    <div class="details-box">
+      <div class="detail-item">
+        <span class="label">User ID</span>
+        <span class="value" id="displayUserID">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Full Name</span>
+        <span class="value" id="displayFullName">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Username</span>
+        <span class="value" id="displayUserName">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Email</span>
+        <span class="value" id="displayEmail">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Role</span>
+        <span class="value" id="displayRole">-</span>
+      </div>
+    </div>
+
+    <!-- View Data Link (Hidden by default) -->
+    <a id="viewDataBtn" href="DietyAnalysis.html" target="_blank" class="view-data-btn">📊 View Data Sheet</a>
+
+    <button class="logout-btn" onclick="logout()">Log Out</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const userDataStr = localStorage.getItem("mcf_user");
+
+      if (!userDataStr) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const user = JSON.parse(userDataStr);
+
+      document.getElementById("welcomeMsg").innerText = `Welcome, ${user.userName}!`;
+      document.getElementById("displayUserID").innerText = user.userID || 'N/A';
+      document.getElementById("displayFullName").innerText = user.fullName || 'N/A';
+      document.getElementById("displayUserName").innerText = user.userName || 'N/A';
+      document.getElementById("displayEmail").innerText = user.email || 'N/A';
+      document.getElementById("displayRole").innerText = user.role || 'N/A';
+
+      // Check if Account Status or Role is Active
+      const roleStr = String(user.role || '').trim().toLowerCase();
+      const statusStr = String(user.accountStatus || '').trim().toLowerCase();
+
+      if (roleStr === 'admin') {
+        document.getElementById("viewDataBtn").style.display = "block";
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem("mcf_user");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
