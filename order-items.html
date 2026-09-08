@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCF Restaurant - Order Menu</title>
+  <style>
+    :root {
+      --primary: #e63946;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #2b2d42;
+      --border: #e0e0e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; }
+    header { background: var(--card-bg); padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+    header h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
+    
+    /* Category Filter Navigation */
+    .categories-nav {
+      display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; background: #fff;
+      border-bottom: 1px solid var(--border); position: sticky; top: 58px; z-index: 90;
+      scrollbar-width: none;
+    }
+    .categories-nav::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px;
+      background: #fff; white-space: nowrap; cursor: pointer; font-size: 14px; font-weight: 600;
+    }
+    .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Menu Container */
+    .menu-container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+    .category-section { margin-bottom: 30px; }
+    .category-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 4px; }
+    
+    /* Food Items Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+    .item-card {
+      background: var(--card-bg); border-radius: 12px; display: flex; padding: 12px;
+      gap: 12px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.03); align-items: center;
+    }
+    .item-img { width: 90px; height: 90px; border-radius: 10px; object-fit: cover; background-color: #f0f0f0; }
+    .item-details { flex: 1; }
+    .item-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .item-meta { font-size: 12px; color: #666; margin-bottom: 6px; }
+    .item-price { font-weight: 700; color: #111; font-size: 15px; }
+    
+    /* Quantity Selector Controls */
+    .qty-control { display: flex; align-items: center; border: 1px solid var(--primary); border-radius: 6px; overflow: hidden; background: #fff; }
+    .qty-btn { background: #fff; color: var(--primary); border: none; width: 28px; height: 28px; font-weight: bold; cursor: pointer; font-size: 16px; }
+    .qty-btn:hover { background: #fff3f3; }
+    .qty-val { width: 28px; text-align: center; font-size: 14px; font-weight: 600; }
+
+    /* Floating Cart Footer Bar */
+    .cart-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 15px 20px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto;
+    }
+    .cart-info { font-size: 16px; font-weight: 600; }
+    .cart-btn { background: var(--primary); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    
+    /* Checkout Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; }
+    .modal-content h2 { margin-bottom: 15px; color: var(--primary); }
+    .modal-content input, .modal-content textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .modal-btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-cancel { background: #ccc; }
+    .btn-submit { background: var(--primary); color: white; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>MCF Restaurant</h1>
+  </header>
+
+  <div class="categories-nav" id="catNav"></div>
+
+  <div class="menu-container" id="menuGrid"></div>
+
+  <!-- Cart Bottom Bar -->
+  <div class="cart-bar">
+    <div class="cart-info">
+      <span id="totalItems">0 Items</span> | ₹<span id="totalPrice">0</span>
+    </div>
+    <button class="cart-btn" onclick="openCheckout()">Checkout / Add to Cart</button>
+  </div>
+
+  <!-- Customer Details Modal -->
+  <div class="modal" id="checkoutModal">
+    <div class="modal-content">
+      <h2>Customer Details</h2>
+      <form id="checkoutForm" onsubmit="submitOrder(event)">
+        <input type="text" id="custName" placeholder="Full Name" required />
+        <input type="tel" id="custMobile" placeholder="Mobile Number" required pattern="[0-9]{10}" />
+        <textarea id="custAddress" placeholder="Delivery Address" rows="3" required></textarea>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn btn-cancel" onclick="closeCheckout()">Cancel</button>
+          <button type="submit" class="modal-btn btn-submit" id="submitBtn">Confirm Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Paste Web App Deployment URL from Google Apps Script below:
+    const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+
+    const itemsData = [
+      { id: 1, category: "Soup", name: "Hot & Sour Soup", size: "Full", price: 70 },
+      { id: 2, category: "Soup", name: "Manchow Soup", size: "Full", price: 80 },
+      { id: 3, category: "Mocktail", name: "Virgin Mojito", size: "Full", price: 100 },
+      { id: 4, category: "Mocktail", name: "Blue Lagoon", size: "Full", price: 120 },
+      { id: 5, category: "Mocktail", name: "Blue Ocean", size: "Full", price: 120 },
+      { id: 6, category: "Mocktail", name: "Pina Colada", size: "Full", price: 125 },
+      { id: 7, category: "Shake", name: "Cold Coffee", size: "Full", price: 100 },
+      { id: 8, category: "Shake", name: "Chocolate Shake", size: "Full", price: 100 },
+      { id: 9, category: "Shake", name: "Oreo Shake", size: "Full", price: 120 },
+      { id: 10, category: "Shake", name: "Kitkat Shake", size: "Full", price: 120 },
+      { id: 11, category: "Shake", name: "Orange Shake", size: "Full", price: 100 },
+      { id: 12, category: "Shake", name: "Strawberry", size: "Full", price: 100 },
+      { id: 13, category: "Tea / Coffee", name: "Regular Tea", size: "Full", price: 40 },
+      { id: 14, category: "Tea / Coffee", name: "Regular Coffee", size: "Full", price: 50 },
+      { id: 15, category: "Tea / Coffee", name: "Chocolate Coffee", size: "Full", price: 60 },
+      { id: 16, category: "Tea / Coffee", name: "Green Tea", size: "Full", price: 70 },
+      { id: 17, category: "Tea / Coffee", name: "Black Tea", size: "Full", price: 50 },
+      { id: 18, category: "Tea / Coffee", name: "Hot Chocolate", size: "Full", price: 80 },
+      { id: 19, category: "Starter", name: "French Fries", size: "Full", price: 70 },
+      { id: 20, category: "Starter", name: "Chilly Potato", size: "Full", price: 90 },
+      { id: 21, category: "Starter", name: "Honey Chilly Potato", size: "Full", price: 100 },
+      { id: 22, category: "Starter", name: "Chilly Mushroom", size: "Full", price: 130 },
+      { id: 23, category: "Starter", name: "Veg. Manchurian", size: "Full", price: 120 },
+      { id: 24, category: "Starter", name: "Paneer Manchurian", size: "Full", price: 140 },
+      { id: 25, category: "Starter", name: "Chilly Paneer", size: "Full", price: 140 },
+      { id: 26, category: "Starter", name: "Garlic Paneer", size: "Full", price: 160 },
+      { id: 27, category: "Starter", name: "Veg. Salt & Paper", size: "Full", price: 160 },
+      { id: 28, category: "Noodles", name: "Veg. Noodles", size: "Full", price: 70 },
+      { id: 29, category: "Noodles", name: "Veg. Hakka Noodles", size: "Full", price: 120 },
+      { id: 30, category: "Noodles", name: "Veg. Chilly Garlic Noodles", size: "Full", price: 120 },
+      { id: 31, category: "Noodles", name: "Paneer Noodles", size: "Full", price: 100 },
+      { id: 32, category: "Noodles", name: "Egg Noodles", size: "Full", price: 130 },
+      { id: 33, category: "Rice", name: "Veg. Fried Rice", size: "Full", price: 70 },
+      { id: 34, category: "Rice", name: "Paneer Fried Rice", size: "Full", price: 100 },
+      { id: 35, category: "Rice", name: "Hakka Fried Rice", size: "Full", price: 120 },
+      { id: 36, category: "Rice", name: "Egg Fried Rice", size: "Full", price: 130 },
+      { id: 37, category: "Rice", name: "Tawa Pulao", size: "Full", price: 100 },
+      { id: 38, category: "Rice", name: "Corn Tawa Pulao", size: "Full", price: 130 },
+      { id: 39, category: "Rice", name: "Paneer Tawa Pulao", size: "Full", price: 140 },
+      { id: 40, category: "Rolls", name: "Veg. Spring Rolls", size: "Full", price: 90 },
+      { id: 41, category: "Rolls", name: "Paneer Roll", size: "Full", price: 120 },
+      { id: 42, category: "Rolls", name: "Egg Roll", size: "Full", price: 100 },
+      { id: 43, category: "Sandwich", name: "Veg. Sandwich", size: "Full", price: 60 },
+      { id: 44, category: "Sandwich", name: "Aloo Tikki Sandwich", size: "Full", price: 80 },
+      { id: 45, category: "Sandwich", name: "Chilly Paneer Sandwich", size: "Full", price: 100 },
+      { id: 46, category: "Sandwich", name: "Cheese Sandwich", size: "Full", price: 90 },
+      { id: 47, category: "Pizza", name: "Mexucum Pizza", size: "Small", price: 109 },
+      { id: 48, category: "Pizza", name: "Mexucum Pizza", size: "Medium", price: 160 },
+      { id: 49, category: "Pizza", name: "Margheritta Pizza", size: "Small", price: 100 },
+      { id: 50, category: "Pizza", name: "Margheritta Pizza", size: "Medium", price: 145 },
+      { id: 51, category: "Pizza", name: "Double Cheese Pizza", size: "Small", price: 120 },
+      { id: 52, category: "Pizza", name: "Double Cheese Pizza", size: "Medium", price: 170 },
+      { id: 53, category: "Pizza", name: "Onion Capsicum Pizza", size: "Small", price: 100 },
+      { id: 54, category: "Pizza", name: "Onion Capsicum Pizza", size: "Medium", price: 140 },
+      { id: 55, category: "Pizza", name: "Corn & Paneer Pizza", size: "Small", price: 109 },
+      { id: 56, category: "Pizza", name: "Corn & Paneer Pizza", size: "Medium", price: 160 },
+      { id: 57, category: "Pizza", name: "Fresh Vegi Pizza", size: "Small", price: 105 },
+      { id: 58, category: "Pizza", name: "Fresh Vegi Pizza", size: "Medium", price: 145 },
+      { id: 59, category: "Burger", name: "Veg. Burger", size: "Full", price: 60 },
+      { id: 60, category: "Burger", name: "Cheese Burger", size: "Full", price: 80 },
+      { id: 61, category: "Burger", name: "Paneer Burger", size: "Full", price: 80 },
+      { id: 62, category: "Main Course", name: "Dal Fry", size: "Half", price: 80 },
+      { id: 63, category: "Main Course", name: "Dal Fry", size: "Full", price: 130 },
+      { id: 64, category: "Main Course", name: "Dal Tadka", size: "Half", price: 90 },
+      { id: 65, category: "Main Course", name: "Dal Tadka", size: "Full", price: 140 },
+      { id: 66, category: "Main Course", name: "Punch Dal", size: "Half", price: 90 },
+      { id: 67, category: "Main Course", name: "Punch Dal", size: "Full", price: 140 },
+      { id: 68, category: "Main Course", name: "Dal Makhani", size: "Half", price: 100 },
+      { id: 69, category: "Main Course", name: "Dal Makhani", size: "Full", price: 160 },
+      { id: 70, category: "Main Course", name: "Shahi Paneer", size: "Half", price: 109 },
+      { id: 71, category: "Main Course", name: "Shahi Paneer", size: "Full", price: 190 },
+      { id: 72, category: "Main Course", name: "Paneer Butter Masala", size: "Half", price: 120 },
+      { id: 73, category: "Main Course", name: "Paneer Butter Masala", size: "Full", price: 200 },
+      { id: 74, category: "Main Course", name: "Kadhal Paneer", size: "Half", price: 120 },
+      { id: 75, category: "Main Course", name: "Kadhal Paneer", size: "Full", price: 200 },
+      { id: 76, category: "Main Course", name: "Aloo Gobhi", size: "Half", price: 80 },
+      { id: 77, category: "Main Course", name: "Aloo Gobhi", size: "Full", price: 140 },
+      { id: 78, category: "Main Course", name: "Aloo Jeera", size: "Half", price: 80 },
+      { id: 79, category: "Main Course", name: "Aloo Jeera", size: "Full", price: 140 },
+      { id: 80, category: "Main Course", name: "Mix Veg", size: "Half", price: 109 },
+      { id: 81, category: "Main Course", name: "Mix Veg", size: "Full", price: 180 },
+      { id: 82, category: "Main Course", name: "Aloo Matar", size: "Half", price: 90 },
+      { id: 83, category: "Main Course", name: "Aloo Matar", size: "Full", price: 160 },
+      { id: 84, category: "Raita / Salad", name: "Mix Raita", size: "Full", price: 100 },
+      { id: 85, category: "Raita / Salad", name: "Boondi Raita", size: "Full", price: 90 },
+      { id: 86, category: "Raita / Salad", name: "Pineapple Raita", size: "Full", price: 130 },
+      { id: 87, category: "Raita / Salad", name: "Green Salad", size: "Full", price: 90 },
+      { id: 88, category: "Raita / Salad", name: "Cucumber Salad", size: "Full", price: 70 },
+      { id: 89, category: "Dessert", name: "Gulab Jamun", size: "Full", price: 40 },
+      { id: 90, category: "Dessert", name: "Ice Cream", size: "Full", price: 50 },
+      { id: 91, category: "Combo", name: "Veg. Thali Special", size: "Full", price: 220 },
+      { id: 92, category: "Combo", name: "Manchurian with Rice", size: "Full", price: 120 },
+      { id: 93, category: "Combo", name: "Chilly Paneer with Rice", size: "Full", price: 130 },
+      { id: 94, category: "Combo", name: "Pizza with Cold Drinks", size: "Full", price: 120 }
+    ];
+
+    let cart = {};
+
+    function renderMenu() {
+      const categories = [...new Set(itemsData.map(i => i.category))];
+      const nav = document.getElementById("catNav");
+      const grid = document.getElementById("menuGrid");
+
+      // Render category filter chips
+      nav.innerHTML = categories.map((cat, idx) => 
+        `<button class="cat-btn ${idx === 0 ? 'active' : ''}" onclick="filterCat('${cat}', this)">${cat}</button>`
+      ).join('');
+
+      // Render Menu Items grouped by Category
+      grid.innerHTML = categories.map(cat => {
+        const catItems = itemsData.filter(i => i.category === cat);
+        return `
+          <div class="category-section" id="sec-${cat}">
+            <div class="category-title">${cat}</div>
+            <div class="grid">
+              ${catItems.map(item => `
+                <div class="item-card">
+                  <img class="item-img" src="https://via.placeholder.com/100?text=${encodeURIComponent(item.name)}" alt="${item.name}" />
+                  <div class="item-details">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-meta">Size: ${item.size}</div>
+                    <div class="item-price">₹${item.price}</div>
+                  </div>
+                  <div class="qty-control">
+                    <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                    <span class="qty-val" id="qty-${item.id}">0</span>
+                    <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterCat(cat, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`sec-${cat}`).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateQty(id, change) {
+      cart[id] = (cart[id] || 0) + change;
+      if (cart[id] <= 0) delete cart[id];
+      document.getElementById(`qty-${id}`).innerText = cart[id] || 0;
+      updateCartSummary();
+    }
+
+    function updateCartSummary() {
+      let count = 0;
+      let total = 0;
+      for (const id in cart) {
+        const item = itemsData.find(i => i.id == id);
+        count += cart[id];
+        total += item.price * cart[id];
+      }
+      document.getElementById('totalItems').innerText = `${count} Items`;
+      document.getElementById('totalPrice').innerText = total;
+    }
+
+    function openCheckout() {
+      if (Object.keys(cart).length === 0) {
+        alert("Please add at least one item to cart.");
+        return;
+      }
+      document.getElementById('checkoutModal').style.display = 'flex';
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').style.display = 'none';
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitting...";
+
+      const cartItems = Object.keys(cart).map(id => {
+        const item = itemsData.find(i => i.id == id);
+        return {
+          id: item.id,
+          name: item.name,
+          size: item.size,
+          price: item.price,
+          quantity: cart[id]
+        };
+      });
+
+      const payload = {
+        customerName: document.getElementById('custName').value,
+        mobile: document.getElementById('custMobile').value,
+        address: document.getElementById('custAddress').value,
+        items: cartItems
+      };
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert("Order placed successfully!");
+        cart = {};
+        renderMenu();
+        updateCartSummary();
+        closeCheckout();
+      } catch (err) {
+        alert("Error submitting order: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Confirm Order";
+      }
+    }
+
+    renderMenu();
+  </script>
+</body>
+</html>
