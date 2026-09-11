@@ -80,6 +80,41 @@
       50% { transform: translateY(-6px); }
     }
 
+/* Update the festival banner styles */
+.festival-banner {
+  background: linear-gradient(135deg, #ff9933, #ffffff, #138808);
+  padding: 10px 0;
+  color: #000080;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.festival-banner p {
+  margin: 0;
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-left-to-right 15s linear infinite;
+}
+
+@keyframes scroll-left-to-right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Styling when an important notice is active */
+.festival-banner.notice-active {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: #ffffff;
+}
+    
     /* Main Body Area */
     .app-container {
       padding: 20px;
@@ -434,9 +469,12 @@
       <span class="floating-emoji">🍕</span>
       <span class="floating-emoji">🍹</span>
     </div>
+    <!-- Festival Wishing Banner -->
+    <div class="festival-banner">
+      <p id="festivalText">✨ Loading Festival Wish... ✨</p>
+    </div>
 
     <div class="app-container">
-      
       <!-- SPECIAL MENU SLIDER -->
       <div>
         <div class="section-title">
@@ -734,6 +772,128 @@
         menuList.style.display = 'block';
       }
     }
+
+// NOTICE/HOLIDAY/FESTIVAL FLOATING BANNER.
+// Set your active notice here. Set to "" or null when there is no notice.
+const IMPORTANT_NOTICE = "";
+//📢 Notice: Special discounts on all combos available today! 📢
+
+// List of Festivals (YYYY-MM-DD format)
+const festivalList = [
+  // --- JANUARY ---
+  { date: "2026-01-01", name: "New Year's Day", wish: "✨ 🎆 Happy New Year! Wishing you a magnificent 365 days ahead! 🎆✨" },
+  { date: "2026-01-14", name: "Makar Sankranti / Pongal / उत्तरायण", wish: "✨ 🎉 Happy Makar Sankranti and Pongal! 🌾✨" },
+  { date: "2026-01-23", name: "Subhash Chandra Bose Jayanti (Parakram Diwas)", wish: "✨ 🇮🇳 Remembering Netaji on Parakram Diwas! 'Give me blood, and I shall give you freedom!' 🇮🇳✨" },
+  { date: "2026-01-26", name: "Republic Day", wish: "✨ 🇮🇳 Happy Republic Day! Jai Hind! 🇮🇳✨" },
+  { date: "2026-01-26", name: "Gujarat Earthquake Remembrance Day", wish: "✨ 🙏 Remembering the souls lost in the 2001 Bhuj Earthquake. Let's pledge to build disaster-resilient structures. 🙏✨" },
+  { date: "2026-01-30", name: "Mahatma Gandhi Punyatithi (Martyrs' Day)", wish: "✨ 🙏 Remembering the Father of the Nation on Martyrs' Day. Let truth and non-violence guide us. 🙏✨" },
+
+  // --- FEBRUARY ---
+  { date: "2026-02-01", name: "Guru Ravidas Jayanti", wish: "✨ 🌸 Heartfelt greetings on Guru Ravidas Jayanti! 🌸✨" },
+  { date: "2026-02-02", name: "Swami Vivekananda Jayanti (National Youth Day)", wish: "✨ 🌅 Arise, awake, and stop not till the goal is reached. Happy National Youth Day! 🌅✨" },
+  { date: "2026-02-15", name: "Maha Shivratri", wish: "✨ 🔱 Om Namah Shivaya! Happy Maha Shivratri! 🔱✨" },
+  { date: "2026-02-21", name: "Dayanand Saraswati Jayanti", wish: "✨ 📖 Respectful tributes to the founder of Arya Samaj, Maharishi Dayanand Saraswati Ji. 📖✨" },
+  { date: "2026-02-23", name: "Chhatrapati Shivaji Maharaj Jayanti", wish: "✨ 🚩 Jai Bhavani, Jai Shivaji! Warm wishes on Shiv Jayanti! 🚩✨" },
+
+  // --- MARCH ---
+  { date: "2026-03-04", name: "Holi", wish: "✨ 🎨 Wishing you a vibrant and joyful Happy Holi! 🎨✨" },
+  { date: "2026-03-11", name: "Tukaram Jayanti", wish: "✨ 📜 Devotional greetings on Sant Tukaram Maharaj Jayanti. ✨" },
+  { date: "2026-03-20", name: "Eid al-Fitr", wish: "✨ 🌙 Eid Mubarak to you and your family! 🌙✨" },
+  { date: "2026-03-20", name: "Chaitra Navratri / Ugadi / Gudi Padwa", wish: "✨ 🌸 Happy Navratri and a Prosperous New Year! 🌸✨" },
+  { date: "2026-03-23", name: "Shaheed Diwas (Bhagat Singh, Sukhdev & Rajguru)", wish: "✨ 🇮🇳 Saluting the supreme sacrifice of our young heroes Bhagat Singh, Sukhdev, and Rajguru. 🇮🇳✨" },
+  { date: "2026-03-27", name: "Ram Navami", wish: "✨ 🏹 Jai Shree Ram! Warm wishes on the auspicious occasion of Ram Navami! 🏹✨" },
+  { date: "2026-03-28", name: "Hanuman Jayanti", wish: "✨ 🐒 May Bajrangbali bless you with immense strength, courage, and wisdom. Jai Hanuman! 🐒✨" },
+
+  // --- APRIL ---
+  { date: "2026-04-02", name: "Mahavir Jayanti", wish: "✨ 🕊️ Wishing you peace and virtue on Mahavir Jayanti. Live and let live. 🕊️✨" },
+  { date: "2026-04-14", name: "Ambedkar Jayanti", wish: "✨ 📖 Jai Bhim! Happy Ambedkar Jayanti! 📖✨" },
+
+  // --- MAY ---
+  { date: "2026-05-02", name: "Buddha Purnima / Buddha Jayanti", wish: "✨ ☸️ May the teachings of Lord Buddha bring peace and harmony to your life. ☸️✨" },
+  { date: "2026-05-09", name: "Rabindranath Tagore Jayanti", wish: "✨ ✍️ Remembering the Bard of Bengal, Gurudev Rabindranath Tagore on his birth anniversary. ✨" },
+  { date: "2026-05-27", name: "Eid al-Adha", wish: "✨ 🐐 Heartfelt wishes on Eid al-Adha! Eid Mubarak! 🐐✨" },
+
+  // --- JUNE ---
+  { date: "2026-06-05", name: "World Environment Day", wish: "✨ 🌱 Let's nurture nature so we can have a better future. Happy Environment Day! 🌱✨" },
+  { date: "2026-06-21", name: "International Yoga Day", wish: "✨ 🧘‍♂️ Align your mind, body, and soul. Happy International Yoga Day! 🧘‍♂️✨" },
+  { date: "2026-06-21", name: "Kabir Jayanti", wish: "✨ 📜 Remembering Sant Kabir Das Ji on his birth anniversary. ✨" },
+
+  // --- AUGUST ---
+  { date: "2026-08-11", name: "Tulsidas Jayanti", wish: "✨ ✍️ Warm greetings on the birth anniversary of Ramcharitmanas author, Goswami Tulsidas Ji. ✨" },
+  { date: "2026-08-15", name: "Independence Day", wish: "✨ 🇮🇳 Happy Independence Day! Vande Mataram! 🇮🇳✨" },
+  { date: "2026-08-28", name: "Raksha Bandhan", wish: "✨ 🧵 Happy Raksha Bandhan to my wonderful sibling! 🧵✨" },
+
+  // --- SEPTEMBER ---
+  { date: "2026-09-04", name: "Krishna Janmashtami", wish: "✨ 🍯 Happy Krishna Janmashtami! Jai Shri Krishna! 🍯✨" },
+  { date: "2026-09-05", name: "Teachers' Day (Dr. Radhakrishnan Jayanti)", wish: "✨ 📚 Thank you for guiding us and shaping our future. Happy Teachers' Day! 📚✨" },
+  { date: "2026-09-14", name: "Ganesh Chaturthi", wish: "✨ 🐘 Ganpati Bappa Morya! Happy Ganesh Chaturthi! 🐘✨" },
+
+  // --- OCTOBER ---
+  { date: "2026-10-02", name: "Gandhi Jayanti", wish: "✨ 👓 Happy Gandhi Jayanti! Let truth and peace prevail. 👓✨" },
+  { date: "2026-10-02", name: "Lal Bahadur Shastri Jayanti", wish: "✨ 🌾 Remembering our former PM Lal Bahadur Shastri Ji. Jai Jawan, Jai Kisan! 🌾✨" },
+  { date: "2026-10-12", name: "Valmiki Jayanti", wish: "✨ ✍️ Warm greetings on Pargat Diwas of Maharishi Valmiki Ji. ✨" },
+  { date: "2026-10-19", name: "Durga Puja / Maha Navami", wish: "✨ 🌸 Shubho Maha Navami! Happy Durga Puja! 🌸✨" },
+  { date: "2026-10-20", name: "Vijayadashami (Dussehra)", wish: "✨ 🏹 Happy Dussehra! May good triumph over evil! 🏹✨" },
+  { date: "2026-10-24", name: "Lahaul-Spiti Earthquake Remembrance Day", wish: "✨ 🙏 Remembering the resilience of the Himalayas on the anniversary of the October earthquake. 🙏✨" },
+  { date: "2026-10-29", name: "Karwa Chauth", wish: "✨ 🌙 Wishing you a lifetime of love. Happy Karwa Chauth! 🌙✨" },
+  { date: "2026-10-31", name: "Sardar Vallabhbhai Patel Jayanti (National Unity Day)", wish: "✨ 🤝 Saluting the Iron Man of India on Rashtriya Ekta Diwas! Let us stand united. 🤝✨" },
+
+  // --- NOVEMBER ---
+  { date: "2026-11-08", name: "Diwali", wish: "✨ 🪔 Shubh Deepavali! Wishing you infinite joy and wealth! 🪔✨" },
+  { date: "2026-11-09", name: "Govardhan Puja", wish: "✨ 🌾 Warm wishes on Govardhan Puja! 🌾✨" },
+  { date: "2026-11-10", name: "Bhai Dooj", wish: "✨ 👫 Happy Bhai Dooj! Cheers to our beautiful bond! 👫✨" },
+  { date: "2026-11-14", name: "Children's Day (Jawaharlal Nehru Jayanti)", wish: "✨ 🎈 Happy Children's Day! Keep the innocent child inside you alive always! 🎈✨" },
+  { date: "2026-11-16", name: "Chhath Puja", wish: "✨ ☀️ May the Sun God bless you. Happy Chhath Puja! ☀️✨" },
+  { date: "2026-11-23", name: "Rani Lakshmibai Jayanti", wish: "✨ ⚔️ Remembering the epitome of bravery, Jhansi Ki Rani Lakshmibai. ✨" },
+  { date: "2026-11-24", name: "Guru Nanak Jayanti", wish: "✨ ☬ Happy Gurpurab! May Guru Nanak Dev Ji bless you. ☬✨" },
+
+  // --- DECEMBER ---
+  { date: "2026-12-02", name: "Bhopal Gas Tragedy Remembrance Day", wish: "✨ 🙏 Deepest tributes to the victims of the Bhopal tragedy. Let us pray for health, safety, and a toxic-free world. 🙏✨" },
+  { date: "2026-12-22", name: "Srinivasa Ramanujan Jayanti (National Mathematics Day)", wish: "✨ 📐 Celebrating the genius of Ramanujan. Happy National Mathematics Day! 📐✨" },
+  { date: "2026-12-23", name: "Chaudhary Charan Singh Jayanti (Kisan Diwas)", wish: "✨ 🚜 Saluting the backbone of our nation on National Farmers' Day. Kisan Diwas ki shubhkamnayen! 🚜✨" },
+  { date: "2026-12-25", name: "Christmas", wish: "✨ 🎄 Merry Christmas! Have a magical holiday season! 🎄✨" },
+  { date: "2026-12-25", name: "Atal Bihari Vajpayee Jayanti (Good Governance Day)", wish: "✨ 🏛️ Remembering former PM Atal Bihari Vajpayee Ji on Sushasan Diwas. ✨" },
+  { date: "2026-12-26", name: "Boxing Day / 2004 Tsunami Remembrance Day", wish: "✨ 🙏 Remembering the lives lost in the 2004 Tsunami. Let us hope for a safer, disaster-resilient world. 🙏✨" },
+  { date: "2026-12-31", name: "New Year’s Eve", wish: "✨ 🥂 Cheers to the beautiful memories and a grand tomorrow! 🥂✨" }
+];
+
+
+function updateBanner() {
+  const bannerText = document.getElementById("festivalText");
+  const bannerContainer = document.querySelector(".festival-banner");
+
+  // 1. Check if Important Notice exists
+  if (IMPORTANT_NOTICE && IMPORTANT_NOTICE.trim() !== "") {
+    bannerText.innerText = IMPORTANT_NOTICE;
+    bannerContainer.classList.add("notice-active"); // Adds optional alert styling
+    return;
+  }
+
+  // Remove alert styling if no notice
+  bannerContainer.classList.remove("notice-active");
+
+  // 2. Otherwise, fetch Date-Wise Festival
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const todayString = `${year}-${month}-${day}`;
+
+  let currentFestival = festivalList.find(item => item.date === todayString);
+
+  if (!currentFestival) {
+    currentFestival = festivalList.find(item => item.date >= todayString);
+  }
+
+  if (currentFestival) {
+    bannerText.innerText = currentFestival.wish;
+  } else {
+    bannerText.innerText = "✨ 🎉 Wishing You a Happy & Delicious Festival Season! 🪔✨";
+  }
+}
+
+// Run on page load
+updateBanner();    
   </script>
 
 </body>
