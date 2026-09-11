@@ -6,70 +6,249 @@
   <title>MCF Restaurant - Order Menu</title>
   <style>
     :root {
-      --primary: #330a20;
-      --bg: #f8f9fa;
-      --card-bg: #ffffff;
-      --text: #2b2d42;
-      --border: #e0e0e0;
+      --bg: #151c28;
+      --card-bg: #1c2638;
+      --input-bg: #101724;
+      --primary: #f28014;
+      --primary-hover: #d96f0b;
+      --text: #e6edf7;
+      --text-muted: #94a3b8;
+      --border: #2a374e;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; }
-    header { background: var(--card-bg); padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-    header h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 110px; }
+
+    header {
+      background: var(--card-bg);
+      padding: 18px 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    header h1 {
+      color: var(--primary);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
     
     /* Category Filter Navigation */
     .categories-nav {
-      display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; background: #fff;
-      border-bottom: 1px solid var(--border); position: sticky; top: 58px; z-index: 90;
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 14px 20px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 65px;
+      z-index: 90;
       scrollbar-width: none;
     }
     .categories-nav::-webkit-scrollbar { display: none; }
     .cat-btn {
-      padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px;
-      background: #fff; white-space: nowrap; cursor: pointer; font-size: 14px; font-weight: 600;
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--input-bg);
+      color: var(--text-muted);
+      white-space: nowrap;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
-    .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .cat-btn:hover { color: var(--text); border-color: var(--primary); }
+    .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 10px rgba(242, 128, 20, 0.3); }
 
     /* Menu Container */
-    .menu-container { max-width: 1000px; margin: 20px auto; padding: 0 15px; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
-    .category-section { margin-bottom: 30px; }
-    .category-title { font-size: 20px; font-weight: 700; margin-left: 15px; margin-bottom: 15px; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 4px; padding-left: 8px; padding-right: 8px; background:#ffb703; border-radius: 35% 35%;}
+    .menu-container { max-width: 1000px; margin: 25px auto; padding: 0 20px; }
+    .category-section { margin-bottom: 35px; }
+    .category-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-left: 4px;
+      margin-bottom: 18px;
+      color: var(--primary);
+      display: inline-block;
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+    }
     
     /* Food Items Grid */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
     .item-card {
-      background: var(--card-bg); border-radius: 12px; display: flex; padding: 12px;
-      gap: 12px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.03); align-items: center;
+      background: var(--card-bg);
+      border-radius: 12px;
+      display: flex;
+      padding: 14px;
+      gap: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      align-items: center;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .item-img { width: 90px; height: 90px; border-radius: 10px; object-fit: cover; background-color: #f0f0f0; }
+    .item-card:hover { transform: translateY(-2px); border-color: #3b4d6b; }
+    
+    .item-img {
+      width: 85px;
+      height: 85px;
+      border-radius: 10px;
+      object-fit: cover;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border);
+    }
+    
     .item-details { flex: 1; }
-    .item-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
-    .item-meta { font-size: 12px; color: #666; margin-bottom: 6px; }
-    .item-price { font-weight: 700; color: #111; font-size: 19px; }
+    .item-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: var(--text); }
+    .item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .item-price { font-weight: 700; color: var(--primary); font-size: 18px; }
     
     /* Quantity Selector Controls */
-    .qty-control { display: flex; align-items: center; border: 1px solid var(--primary); border-radius: 6px; overflow: hidden; background: #fff; }
-    .qty-btn { background: #fff; color: var(--primary); border: none; width: 28px; height: 28px; font-weight: bold; cursor: pointer; font-size: 16px; }
-    .qty-btn:hover { background: #fff3f3; }
-    .qty-val { width: 28px; text-align: center; font-size: 14px; font-weight: 600; }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--input-bg);
+    }
+    .qty-btn {
+      background: transparent;
+      color: var(--primary);
+      border: none;
+      width: 30px;
+      height: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s ease;
+    }
+    .qty-btn:hover { background: rgba(242, 128, 20, 0.15); }
+    .qty-val { width: 28px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); }
 
     /* Floating Cart Footer Bar */
     .cart-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 15px 20px;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
     }
-    .cart-info { font-size: 16px; font-weight: 600; }
-    .cart-btn { background: var(--primary); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .cart-info { font-size: 16px; font-weight: 600; color: var(--text); }
+    .cart-info span { color: var(--primary); }
+    
+    .cart-btn {
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .cart-btn:hover { background: var(--primary-hover); }
     
     /* Checkout Modal */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; }
-    .modal-content h2 { margin-bottom: 15px; color: var(--primary); }
-    .modal-content input, .modal-content textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-    .modal-btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-    .btn-cancel { background: #ccc; }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-content {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 450px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .modal-content h2 { margin-bottom: 18px; color: var(--primary); font-size: 22px; text-align: center; }
+    .form-group { margin-bottom: 14px; }
+    .modal-content input, .modal-content textarea {
+      width: 100%;
+      padding: 12px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .modal-content input:focus, .modal-content textarea:focus { border-color: var(--primary); }
+    
+    /* Mobile Input Wrapper with +91 Prefix */
+    .mobile-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .mobile-input-wrapper:focus-within { border-color: var(--primary); }
+    .country-code {
+      padding: 12px 0 12px 14px;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 14px;
+      user-select: none;
+    }
+    .mobile-input-wrapper input {
+      border: none !important;
+      background: transparent !important;
+      padding-left: 8px !important;
+    }
+
+    /* Address Field Wrapper with Location Button */
+    .address-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .location-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+    }
+    .location-btn:hover { background: rgba(242, 128, 20, 0.15); }
+
+    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px; }
+    .modal-btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .btn-cancel { background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-cancel:hover { background: #1e2b40; color: var(--text); }
     .btn-submit { background: var(--primary); color: white; }
+    .btn-submit:hover { background: var(--primary-hover); }
   </style>
 </head>
 <body>
@@ -95,9 +274,29 @@
     <div class="modal-content">
       <h2>Customer Details</h2>
       <form id="checkoutForm" onsubmit="submitOrder(event)">
-        <input type="text" id="custName" placeholder="Full Name" required />
-        <input type="tel" id="custMobile" placeholder="Mobile Number" required pattern="[0-9]{10}" />
-        <textarea id="custAddress" placeholder="Delivery Address" rows="3" required></textarea>
+        <div class="form-group">
+          <input type="text" id="custName" placeholder="Full Name" required />
+        </div>
+        
+        <!-- Mobile Input with +91 Prefix -->
+        <div class="form-group">
+          <div class="mobile-input-wrapper">
+            <span class="country-code">+91</span>
+            <input type="tel" id="custMobile" placeholder="Mobile Number" required pattern="[0-9]{10}" maxlength="10" />
+          </div>
+        </div>
+
+        <!-- Delivery Address with Geolocation -->
+        <div class="form-group">
+          <div class="address-header">
+            <label style="font-size: 12px; color: var(--text-muted);">Delivery Address</label>
+            <button type="button" class="location-btn" onclick="getCurrentLocation()">
+              📍 Use Current Location
+            </button>
+          </div>
+          <textarea id="custAddress" placeholder="Enter your full address" rows="3" required></textarea>
+        </div>
+
         <div class="modal-actions">
           <button type="button" class="modal-btn btn-cancel" onclick="closeCheckout()">Cancel</button>
           <button type="submit" class="modal-btn btn-submit" id="submitBtn">Confirm Order</button>
@@ -107,8 +306,7 @@
   </div>
 
   <script>
-    // Paste Web App Deployment URL from Google Apps Script below:
-    const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLNIvkDOxyrdAL1mmALeoIVIa8ZB_TkhTXEyQUvrsUW3HaDrtrK7IOU7oxlz47vN4ROQ/exec";
 
     const itemsData = [
       { id: 1, category: "Soup", name: "Hot & Sour Soup", size: "Full", price: 70 },
@@ -214,12 +412,10 @@
       const nav = document.getElementById("catNav");
       const grid = document.getElementById("menuGrid");
 
-      // Render category filter chips
       nav.innerHTML = categories.map((cat, idx) => 
         `<button class="cat-btn ${idx === 0 ? 'active' : ''}" onclick="filterCat('${cat}', this)">${cat}</button>`
       ).join('');
 
-      // Render Menu Items grouped by Category
       grid.innerHTML = categories.map(cat => {
         const catItems = itemsData.filter(i => i.category === cat);
         return `
@@ -284,11 +480,46 @@
       document.getElementById('checkoutModal').style.display = 'none';
     }
 
+    /* Fetch current location coordinates and convert to address via OpenStreetMap */
+    function getCurrentLocation() {
+      const addressBox = document.getElementById('custAddress');
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+      }
+
+      addressBox.value = "Fetching location...";
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await response.json();
+            if (data && data.display_name) {
+              addressBox.value = data.display_name;
+            } else {
+              addressBox.value = `Lat: ${latitude}, Lon: ${longitude}`;
+            }
+          } catch (err) {
+            addressBox.value = `Lat: ${latitude}, Lon: ${longitude}`;
+          }
+        },
+        (error) => {
+          alert("Unable to retrieve location: " + error.message);
+          addressBox.value = "";
+        }
+      );
+    }
+
     async function submitOrder(e) {
       e.preventDefault();
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.innerText = "Submitting...";
+
+      const rawMobile = document.getElementById('custMobile').value;
+      const fullMobile = rawMobile; // Combines prefix for submission
 
       const cartItems = Object.keys(cart).map(id => {
         const item = itemsData.find(i => i.id == id);
@@ -303,7 +534,7 @@
 
       const payload = {
         customerName: document.getElementById('custName').value,
-        mobile: document.getElementById('custMobile').value,
+        mobile: fullMobile,
         address: document.getElementById('custAddress').value,
         items: cartItems
       };
@@ -312,17 +543,13 @@
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        alert("Order placed successfully!");
-        cart = {};
-        renderMenu();
-        updateCartSummary();
-        closeCheckout();
+        
+        window.location.href = `order-submitted.html?mobile=${encodeURIComponent(fullMobile)}`;
       } catch (err) {
         alert("Error submitting order: " + err.message);
-      } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Confirm Order";
       }
