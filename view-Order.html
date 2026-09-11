@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Today's Orders</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #ff9f1c;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --border: #334155;
+      --pending: #eab308;
+      --delivered: #22c55e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; }
+    
+    header {
+      max-width: 1200px;
+      margin: 0 auto 25px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 15px;
+    }
+
+    header h1 { color: var(--accent); font-size: 24px; }
+    .refresh-btn {
+      background: #3b82f6; color: white; border: none; padding: 8px 16px;
+      border-radius: 6px; cursor: pointer; font-weight: 600;
+    }
+    .refresh-btn:hover { background: #2563eb; }
+
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Fancy Order Card Styling */
+    .order-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 20px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 10px;
+    }
+
+    .cust-name { font-weight: 700; font-size: 18px; color: #ffffff; }
+    .order-time { font-size: 12px; color: var(--subtext); }
+
+    .cust-info { font-size: 14px; color: var(--subtext); margin-bottom: 15px; }
+    .cust-info p { margin-bottom: 4px; }
+    .cust-info strong { color: var(--text); }
+
+    .items-list {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 16px;
+      color: var(--accent);
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    /* Status Toggle Button */
+    .status-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-pending {
+      background: rgba(234, 179, 8, 0.15);
+      color: var(--pending);
+      border: 1px solid var(--pending);
+    }
+    .btn-pending:hover { background: var(--pending); color: #000; }
+
+    .btn-delivered {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--delivered);
+      border: 1px solid var(--delivered);
+    }
+    .btn-delivered:hover { background: var(--delivered); color: #000; }
+
+    .no-orders { text-align: center; color: var(--subtext); grid-column: 1 / -1; padding: 40px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📋 Today's Orders Dashboard</h1>
+    <button class="refresh-btn" onclick="loadTodaysOrders()">🔄 Refresh</button>
+  </header>
+
+  <div class="orders-grid" id="ordersGrid">
+    <div class="no-orders">Loading today's orders...</div>
+  </div>
+
+  <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIcvjiakqDHLHdV2JUkdh2UIEqk4FjLCzq8KJ9NtOh0cdGCbsxkcGUK6iUOkNhRR53/exec";
+
+    async function loadTodaysOrders() {
+      const grid = document.getElementById('ordersGrid');
+      grid.innerHTML = '<div class="no-orders">Updating orders...</div>';
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL);
+        const data = await res.json();
+
+        if (data.status === "success" && data.orders.length > 0) {
+          grid.innerHTML = data.orders.map(order => {
+            const isDelivered = order.status === "Delivered";
+            return `
+              <div class="order-card">
+                <div>
+                  <div class="card-header">
+                    <span class="cust-name">${order.customerName}</span>
+                    <span class="order-time">🕒 ${order.formattedTime}</span>
+                  </div>
+
+                  <div class="cust-info">
+                    <p><strong>Mobile:</strong> ${order.mobile}</p>
+                    <p><strong>Address:</strong> ${order.address}</p>
+                  </div>
+
+                  <div class="items-list">
+                    ${order.items.map(item => `
+                      <div class="item-row">
+                        <span>${item.name} (${item.size}) x ${item.quantity}</span>
+                        <span>₹${item.price}</span>
+                      </div>
+                    `).join('')}
+                    <div class="total-row">
+                      <span>Total:</span>
+                      <span>₹${order.totalAmount}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  class="status-btn ${isDelivered ? 'btn-delivered' : 'btn-pending'}" 
+                  onclick="toggleStatus('${order.timestamp}', '${order.mobile}', '${order.status}', this)">
+                  ${isDelivered ? '✓ Status: Delivered' : '⏳ Status: Pending (Click to Mark Delivered)'}
+                </button>
+              </div>
+            `;
+          }).join('');
+        } else {
+          grid.innerHTML = '<div class="no-orders">No orders received today yet!</div>';
+        }
+      } catch (err) {
+        grid.innerHTML = `<div class="no-orders">Error loading orders: ${err.message}</div>`;
+      }
+    }
+
+    async function toggleStatus(timestamp, mobile, currentStatus, btn) {
+      const newStatus = currentStatus === "Delivered" ? "Pending" : "Delivered";
+      btn.disabled = true;
+      btn.innerText = "Updating...";
+
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=updateStatus&timestamp=${encodeURIComponent(timestamp)}&mobile=${encodeURIComponent(mobile)}&status=${encodeURIComponent(newStatus)}`);
+        const data = await res.json();
+
+        if (data.status === "success") {
+          loadTodaysOrders(); // Refresh cards after updating status
+        } else {
+          alert("Failed to update status: " + data.message);
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert("Error updating status: " + err.message);
+        btn.disabled = false;
+      }
+    }
+
+    // Auto-load on page start
+    loadTodaysOrders();
+  </script>
+</body>
+</html>
