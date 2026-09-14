@@ -15,13 +15,13 @@
     .detail-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e293b; }
     .detail-item:last-child { border-bottom: none; }
     .label { color: #94a3b8; font-size: 0.85rem; }
-    .value { color: #f8fafc; font-weight: 600; font-size: 0.9rem; }
+    .value { color: #f8fafc; font-weight: 600; font-size: 0.9rem; word-break: break-word; }
     
-    /* View Data Link Styles */
-    .view-data-btn { display: none; width: 100%; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 600; border-radius: 8px; padding: 12px; font-size: 0.95rem; margin-bottom: 16px; text-align: center; transition: background 0.2s; }
+    /* Dynamic Buttons */
+    .view-data-btn { display: none; width: 100%; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 600; border-radius: 8px; padding: 12px; font-size: 0.95rem; margin-bottom: 12px; text-align: center; transition: background 0.2s; }
     .view-data-btn:hover { background: #1d4ed8; }
 
-    .logout-btn { width: 100%; background: #ef4444; color: #fff; font-weight: 600; border: none; border-radius: 8px; padding: 12px; font-size: 0.95rem; cursor: pointer; transition: opacity 0.2s; }
+    .logout-btn { width: 100%; background: #ef4444; color: #fff; font-weight: 600; border: none; border-radius: 8px; padding: 12px; font-size: 0.95rem; cursor: pointer; transition: opacity 0.2s; margin-top: 8px; }
     .logout-btn:hover { opacity: 0.9; }
   </style>
 </head>
@@ -41,22 +41,23 @@
         <span class="value" id="displayFullName">-</span>
       </div>
       <div class="detail-item">
-        <span class="label">Username</span>
-        <span class="value" id="displayUserName">-</span>
+        <span class="label">Mobile Number</span>
+        <span class="value" id="displayMobile">-</span>
       </div>
       <div class="detail-item">
         <span class="label">Email</span>
         <span class="value" id="displayEmail">-</span>
       </div>
       <div class="detail-item">
-        <span class="label">Role</span>
-        <span class="value" id="displayRole">-</span>
+        <span class="label">MCF Diety</span>
+        <span class="value" id="displaymcfDiety">-</span>
       </div>
     </div>
 
-    <!-- View Data Link (Hidden by default) href="view-Order.html"-->
+    <!-- Conditional Navigation Links -->
     <a id="viewDataBtn" href="diety_analysis.html" target="_blank" class="view-data-btn">📊 View Data Sheet</a>
     <a id="viewOrdersBtn" href="view-Order.html" target="_blank" class="view-data-btn">📦 View Today Orders</a>
+    <a id="viewOwnDietBtn" href="view-Diets.html" target="_blank" class="view-data-btn">📦 View Your Diets</a>
     
     <button class="logout-btn" onclick="logout()">Log Out</button>
   </div>
@@ -70,22 +71,30 @@
         return;
       }
 
-      const user = JSON.parse(userDataStr);
+      try {
+        const user = JSON.parse(userDataStr);
 
-      document.getElementById("welcomeMsg").innerText = `Welcome, ${user.fullName}!`;
-      document.getElementById("displayUserID").innerText = user.userID || 'N/A';
-      document.getElementById("displayFullName").innerText = user.fullName || 'N/A';
-      document.getElementById("displayUserName").innerText = user.userName || 'N/A';
-      document.getElementById("displayEmail").innerText = user.email || 'N/A';
-      document.getElementById("displayRole").innerText = user.role || 'N/A';
+        document.getElementById("welcomeMsg").innerText = `Welcome, ${user.fullName || 'User'}!`;
+        document.getElementById("displayUserID").innerText = user.userID || 'N/A';
+        document.getElementById("displayFullName").innerText = user.fullName || 'N/A';
+        document.getElementById("displayMobile").innerText = user.mobile || 'N/A';
+        document.getElementById("displayEmail").innerText = user.email || 'N/A';
+        document.getElementById("displaymcfDiety").innerText = user.mcfDiety || 'N/A';
 
-      // Check if Account Status or Role is Active
-      const roleStr = String(user.role || '').trim().toLowerCase();
-      const statusStr = String(user.accountStatus || '').trim().toLowerCase();
+        const mcfDiety = String(user.mcfDiety || '').trim().toLowerCase();
 
-      if (roleStr === 'admin') {
-        document.getElementById("viewDataBtn").style.display = "block";
-        document.getElementById("viewOrdersBtn").style.display = "block";
+        // Render options based on MCF Diety role
+        if (mcfDiety === 'admin') {
+          document.getElementById("viewDataBtn").style.display = "block";
+          document.getElementById("viewOrdersBtn").style.display = "block";
+        }
+        
+        if (mcfDiety === 'yes') {
+          document.getElementById("viewOwnDietBtn").style.display = "block";
+        }
+      } catch (e) {
+        console.error("Failed to parse user session", e);
+        logout();
       }
     });
 
