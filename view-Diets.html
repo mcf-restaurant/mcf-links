@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Diets - MCF Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 520px; padding: 32px; text-align: center; }
+    .header-title { color: #f59e0b; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 24px; }
+    .details-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 24px; }
+    .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e293b; }
+    .detail-item:last-child { border-bottom: none; }
+    .label { color: #94a3b8; font-size: 0.85rem; }
+    .value { color: #f8fafc; font-weight: 600; font-size: 0.9rem; word-break: break-word; }
+    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+    .badge-yes { background: #10b981; color: #ffffff; }
+    .badge-no { background: #ef4444; color: #ffffff; }
+    .btn-back { display: block; width: 100%; background: #334155; color: #fff; text-decoration: none; font-weight: 600; border-radius: 8px; padding: 12px; font-size: 0.95rem; text-align: center; transition: background 0.2s; }
+    .btn-back:hover { background: #475569; }
+    #statusMessage { margin-bottom: 16px; font-size: 0.9rem; min-height: 20px; }
+    .status-error { color: #ef4444; }
+    .status-info { color: #f59e0b; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1 class="header-title">MCF RESTAURANT</h1>
+    <p class="subtitle">Your Diet Subscription & Analysis Details</p>
+
+    <div id="statusMessage" class="status-info">Validating session and fetching data...</div>
+
+    <div class="details-box" id="dietDataBox" style="display: none;">
+      <div class="detail-item">
+        <span class="label">Customer ID</span>
+        <span class="value" id="valCustID">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Name</span>
+        <span class="value" id="valName">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Mobile Number</span>
+        <span class="value" id="valMobile">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Diet Type</span>
+        <span class="value" id="valDietType">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">From Date</span>
+        <span class="value" id="valFromDate">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Total Diets</span>
+        <span class="value" id="valTotalDiets">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Pending Payment</span>
+        <span class="value" id="valPendingPayment">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Remaining Diets</span>
+        <span class="value" id="valRemainingDiets">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Today Punch-In</span>
+        <span class="value" id="valTodayPunch">-</span>
+      </div>
+    </div>
+
+    <a href="success.html" class="btn-back">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    // Replace with your Web App URL after deploying view-Diets.gs
+    const VIEW_DIETS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3Ng1VW0ciNlW-px8JexfkBlYYqZfGyRuDBxCXYb_avxWAGGZFua9B7KNZ2k5_Pyh_/exec";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchUserDiets();
+    });
+
+    async function fetchUserDiets() {
+      const statusElem = document.getElementById("statusMessage");
+      const dataBox = document.getElementById("dietDataBox");
+
+      const userDataStr = sessionStorage.getItem("mcf_user") || localStorage.getItem("mcf_user");
+      if (!userDataStr) {
+        statusElem.innerText = "No active user session found. Please log in again.";
+        statusElem.className = "status-error";
+        return;
+      }
+
+      try {
+        const user = JSON.parse(userDataStr);
+        const mobile = String(user.mobile || '').trim();
+
+        if (!/^\d{10}$/.test(mobile)) {
+          statusElem.innerText = "Invalid 10-digit mobile number found in session.";
+          statusElem.className = "status-error";
+          return;
+        }
+
+        const res = await fetch(`${VIEW_DIETS_SCRIPT_URL}?action=getUserDiets&mobile=${encodeURIComponent(mobile)}`);
+        const data = await res.json();
+
+        if (data.success) {
+          statusElem.style.display = "none";
+          dataBox.style.display = "block";
+
+          const diet = data.dietData;
+          document.getElementById("valCustID").innerText = diet.custID || 'N/A';
+          document.getElementById("valName").innerText = diet.name || 'N/A';
+          document.getElementById("valMobile").innerText = diet.mobileNumber || 'N/A';
+          document.getElementById("valDietType").innerText = diet.dietType || 'N/A';
+          document.getElementById("valFromDate").innerText = diet.fromDate || 'N/A';
+          document.getElementById("valTotalDiets").innerText = diet.totalDiets || '0';
+          document.getElementById("valPendingPayment").innerText = diet.pendingPayment ? `₹${diet.pendingPayment}` : '₹0';
+          document.getElementById("valRemainingDiets").innerText = diet.remainingDiets || '0';
+
+          const punchStatus = String(diet.todayPunchIn || 'NO').toUpperCase();
+          const badgeClass = punchStatus === 'YES' ? 'badge-yes' : 'badge-no';
+          document.getElementById("valTodayPunch").innerHTML = `<span class="status-badge ${badgeClass}">${punchStatus}</span>`;
+        } else {
+          statusElem.innerText = data.message || "No diet records found for your mobile number.";
+          statusElem.className = "status-error";
+        }
+      } catch (err) {
+        statusElem.innerText = "Error fetching diet data from server.";
+        statusElem.className = "status-error";
+      }
+    }
+  </script>
+</body>
+</html>
