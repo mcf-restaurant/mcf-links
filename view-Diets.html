@@ -4,13 +4,146 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Diets - MCF Restaurant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
     body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
     .card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 520px; padding: 32px; text-align: center; }
     .header-title { color: #f59e0b; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
     .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 24px; }
+    
+    /* Attendance KPI Container */
+    .kpi-card {
+      background: rgba(145, 160, 195, 0.6);
+      border: 1px solid rgba(222, 184, 184, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .kpi-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .kpi-badge {
+      background: rgba(30, 21, 129, 0.15);
+      color: #34d399;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .kpi-badge.badge-extra {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-box {
+      background: rgba(15, 23, 42, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .stat-value {
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* Progress Bar Layout */
+    .progress-wrapper {
+      position: relative;
+      background: #0f172a;
+      border-radius: 12px;
+      height: 32px;
+      padding: 3px;
+      display: flex;
+      gap: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .progress-segment {
+      height: 100%;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #ffffff;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .regular-progress {
+      background: linear-gradient(90deg, #10b981, #34d399);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+    .extra-progress {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+      animation: pulse-red 2s infinite alternate;
+    }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.3); }
+      100% { box-shadow: 0 0 14px rgba(239, 68, 68, 0.7); }
+    }
+
+    /* Status Banner */
+    .status-banner {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .status-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .status-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .status-info-text .title-text {
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .status-info-text .sub-text {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
     .details-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 24px; }
     .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e293b; }
     .detail-item:last-child { border-bottom: none; }
@@ -35,6 +168,43 @@
     <div id="statusMessage" class="status-info">Validating session and fetching data...</div>
 
     <div class="details-box" id="dietDataBox" style="display: none;">
+      
+      <!-- Integrated Attendance KPI Section -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Attendance KPI</span>
+          <span class="kpi-badge" id="completion-tag">0% Completed</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-value" id="reg-days" style="color: #34d399;">0/0</div>
+            <div class="stat-label">Regular Days</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="extra-days" style="color: #f87171;">+0</div>
+            <div class="stat-label">Extra Days</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="total-days" style="color: #f8fafc;">0 Logged</div>
+            <div class="stat-label">Total Days</div>
+          </div>
+        </div>
+
+        <div class="progress-wrapper">
+          <div class="progress-segment regular-progress" id="reg-bar" style="width: 0%;">0 Days</div>
+          <div class="progress-segment extra-progress" id="extra-bar" style="width: 0%; display: none;">+0 Extra</div>
+        </div>
+
+        <div class="status-banner">
+          <div class="status-icon" id="status-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div>
+          <div class="status-info-text">
+            <span class="title-text" id="banner-title" style="color: #34d399;">Subscription Active</span>
+            <span class="sub-text" id="banner-desc">Attendance tracked dynamically based on plan.</span>
+          </div>
+        </div>
+      </div>
+
       <div class="detail-item">
         <span class="label">Customer ID</span>
         <span class="value" id="valCustID">-</span>
@@ -77,7 +247,7 @@
   </div>
 
   <script>
-    // Replace with your Web App URL after deploying view-Diets.gs
+    // Web App URL for view-Diets.gs
     const VIEW_DIETS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3Ng1VW0ciNlW-px8JexfkBlYYqZfGyRuDBxCXYb_avxWAGGZFua9B7KNZ2k5_Pyh_/exec";
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -125,6 +295,13 @@
           const punchStatus = String(diet.todayPunchIn || 'NO').toUpperCase();
           const badgeClass = punchStatus === 'YES' ? 'badge-yes' : 'badge-no';
           document.getElementById("valTodayPunch").innerHTML = `<span class="status-badge ${badgeClass}">${punchStatus}</span>`;
+
+          // Dynamic calculation for Attendance KPI
+          const totalDiets = parseInt(diet.totalDiets, 10) || 0;
+          const remainingDiets = parseInt(diet.remainingDiets, 10) || 0;
+          const attendedDays = Math.max(0, totalDiets - remainingDiets);
+
+          renderAttendanceKPI(attendedDays, totalDiets);
         } else {
           statusElem.innerText = data.message || "No diet records found for your mobile number.";
           statusElem.className = "status-error";
@@ -132,6 +309,63 @@
       } catch (err) {
         statusElem.innerText = "Error fetching diet data from server.";
         statusElem.className = "status-error";
+      }
+    }
+
+    function renderAttendanceKPI(attended, maxTarget) {
+      if (maxTarget <= 0) maxTarget = 30; // Default fallback to 30 days if plan target isn't available
+
+      const regularAttended = Math.min(attended, maxTarget);
+      const extraAttended = Math.max(0, attended - maxTarget);
+      
+      const overallCapacity = Math.max(maxTarget, attended);
+      const regPercentage = (regularAttended / overallCapacity) * 100;
+      const extraPercentage = (extraAttended / overallCapacity) * 100;
+      const completionPercentage = Math.round((attended / maxTarget) * 100);
+
+      // DOM Elements
+      const completionTag = document.getElementById('completion-tag');
+      const regDays = document.getElementById('reg-days');
+      const extraDays = document.getElementById('extra-days');
+      const totalDays = document.getElementById('total-days');
+      const regBar = document.getElementById('reg-bar');
+      const extraBar = document.getElementById('extra-bar');
+      const statusIcon = document.getElementById('status-icon');
+      const bannerTitle = document.getElementById('banner-title');
+      const bannerDesc = document.getElementById('banner-desc');
+
+      // Update text values
+      regDays.innerText = `${regularAttended}/${maxTarget}`;
+      extraDays.innerText = `+${extraAttended}`;
+      totalDays.innerText = `${attended} Logged`;
+      completionTag.innerText = `${completionPercentage}% Completed`;
+
+      // Update Progress Bar Segments
+      regBar.style.width = `${regPercentage}%`;
+      regBar.innerText = regularAttended > 0 ? `${regularAttended} Days` : '';
+
+      if (extraAttended > 0) {
+        extraBar.style.width = `${extraPercentage}%`;
+        extraBar.style.display = 'flex';
+        extraBar.innerText = `+${extraAttended} Extra`;
+        completionTag.className = 'kpi-badge badge-extra';
+
+        statusIcon.innerText = '⚡';
+        statusIcon.style.background = 'rgba(239, 68, 68, 0.15)';
+        statusIcon.style.color = '#f87171';
+        bannerTitle.innerText = `${extraAttended} Extra Days Logged!`;
+        bannerTitle.style.color = '#f87171';
+        bannerDesc.innerText = 'User has exceeded the standard base subscription limit.';
+      } else {
+        extraBar.style.display = 'none';
+        completionTag.className = 'kpi-badge';
+
+        statusIcon.innerText = '✓';
+        statusIcon.style.background = 'rgba(16, 185, 129, 0.15)';
+        statusIcon.style.color = '#34d399';
+        bannerTitle.innerText = 'Subscription Active';
+        bannerTitle.style.color = '#34d399';
+        bannerDesc.innerText = `${maxTarget - regularAttended} days remaining in current subscription.`;
       }
     }
   </script>
