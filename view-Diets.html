@@ -287,7 +287,7 @@
           document.getElementById("valName").innerText = diet.name || 'N/A';
           document.getElementById("valMobile").innerText = diet.mobileNumber || 'N/A';
           document.getElementById("valDietType").innerText = diet.dietType || 'N/A';
-          document.getElementById("valFromDate").innerText = diet.fromDate || 'N/A';
+          document.getElementById("valFromDate").innerText = diet.fromDate ? new Date(diet.fromDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-') : 'N/A';
           document.getElementById("valTotalDiets").innerText = diet.totalDiets || '0';
           document.getElementById("valPendingPayment").innerText = diet.pendingPayment ? `₹${diet.pendingPayment}` : '₹0';
           document.getElementById("valRemainingDiets").innerText = diet.remainingDiets || '0';
