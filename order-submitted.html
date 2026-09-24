@@ -139,7 +139,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLNIvkDOxyrdAL1mmALeoIVIa8ZB_TkhTXEyQUvrsUW3HaDrtrK7IOU7oxlz47vN4ROQ/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_z7GJKzizEo2_SqRem7Z4ZRhYdZLxO0OdYLEm28N4S-lrV97RwvenVY_CcJpccrPJwA/exec";
 
     window.onload = function() {
       const progressBar = document.getElementById('progressBar');
@@ -186,22 +186,49 @@
             `;
 
             let itemsHtml = '';
-            let grandTotal = 0;
+            let subtotal = 0;
 
             data.items.forEach(item => {
-              grandTotal += Number(item.price);
+              subtotal += Number(item.price);
               itemsHtml += `
                 <div class="item-row">
                   <span>${item.name} (${item.size}) x ${item.quantity}</span>
-                  <span>₹${item.price}</span>
+                  <span>₹${item.price.toFixed(2)}</span>
                 </div>
               `;
             });
 
+            // Tax & Fee Calculations
+            const cgst = subtotal * 0.025;
+            const sgst = subtotal * 0.025;
+            const serviceCharge = 5.00;
+            const grandTotal = subtotal + cgst + sgst + serviceCharge;
+
+            // Append Tax & Fee Rows into Item List
+            itemsHtml += `
+              <hr style="margin: 8px 0; border: none; border-top: 1px dashed #374151;" />
+              <div class="item-row" style="color: var(--subtext);">
+                <span>Subtotal</span>
+                <span>₹${subtotal.toFixed(2)}</span>
+              </div>
+              <div class="item-row" style="color: var(--subtext);">
+                <span>CGST (2.5%)</span>
+                <span>₹${cgst.toFixed(2)}</span>
+              </div>
+              <div class="item-row" style="color: var(--subtext);">
+                <span>SGST (2.5%)</span>
+                <span>₹${sgst.toFixed(2)}</span>
+              </div>
+              <div class="item-row" style="color: var(--subtext);">
+                <span>Service Charge</span>
+                <span>₹${serviceCharge.toFixed(2)}</span>
+              </div>
+            `;
+
             document.getElementById('itemList').innerHTML = itemsHtml;
             document.getElementById('totalRow').innerHTML = `
-              <span>Total Amount:</span>
-              <span>₹${grandTotal}</span>
+              <span>Grand Total:</span>
+              <span>₹${grandTotal.toFixed(2)}</span>
             `;
           } else {
             document.getElementById('custInfo').innerText = "Order records could not be retrieved from spreadsheet.";
