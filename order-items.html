@@ -27,7 +27,10 @@
       top: 0;
       z-index: 100;
       border-bottom: 1px solid var(--border);
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
     header h1 {
       color: var(--primary);
@@ -36,8 +39,27 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
+
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
     
-    /* Category Filter Navigation */
     .categories-nav {
       display: flex;
       gap: 12px;
@@ -46,7 +68,7 @@
       background: var(--card-bg);
       border-bottom: 1px solid var(--border);
       position: sticky;
-      top: 65px;
+      top: 115px;
       z-index: 90;
       scrollbar-width: none;
     }
@@ -66,7 +88,6 @@
     .cat-btn:hover { color: var(--text); border-color: var(--primary); }
     .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 10px rgba(242, 128, 20, 0.3); }
 
-    /* Menu Container */
     .menu-container { max-width: 1000px; margin: 25px auto; padding: 0 20px; }
     .category-section { margin-bottom: 35px; }
     .category-title {
@@ -80,7 +101,6 @@
       padding-left: 10px;
     }
     
-    /* Food Items Grid */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
     .item-card {
       background: var(--card-bg);
@@ -107,9 +127,9 @@
     .item-details { flex: 1; }
     .item-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: var(--text); }
     .item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-    .item-price { font-weight: 700; color: var(--primary); font-size: 18px; }
+    .item-price { font-weight: 700; color: var(--primary); font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .old-price { text-decoration: line-through; color: var(--text-muted); font-size: 14px; font-weight: 400; }
     
-    /* Quantity Selector Controls */
     .qty-control {
       display: flex;
       align-items: center;
@@ -132,7 +152,6 @@
     .qty-btn:hover { background: rgba(242, 128, 20, 0.15); }
     .qty-val { width: 28px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); }
 
-    /* Floating Cart Footer Bar */
     .cart-bar {
       position: fixed;
       bottom: 0;
@@ -163,7 +182,6 @@
     }
     .cart-btn:hover { background: var(--primary-hover); }
     
-    /* Checkout Modal */
     .modal {
       display: none;
       position: fixed;
@@ -197,7 +215,6 @@
     }
     .modal-content input:focus, .modal-content textarea:focus { border-color: var(--primary); }
     
-    /* Mobile Input Wrapper with +91 Prefix */
     .mobile-input-wrapper {
       display: flex;
       align-items: center;
@@ -220,7 +237,6 @@
       padding-left: 8px !important;
     }
 
-    /* Address Field Wrapper with Location Button */
     .address-header {
       display: flex;
       justify-content: space-between;
@@ -249,12 +265,33 @@
     .btn-cancel:hover { background: #1e2b40; color: var(--text); }
     .btn-submit { background: var(--primary); color: white; }
     .btn-submit:hover { background: var(--primary-hover); }
+
+    #otpGroup {
+      display: none;
+      margin-top: 10px;
+      border-top: 1px dashed var(--border);
+      padding-top: 14px;
+    }
+    .otp-status {
+      font-size: 12px;
+      color: #34d399;
+      margin-bottom: 6px;
+    }
+    .no-results {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <h1>MCF Restaurant Items</h1>
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search items by name..." oninput="filterItems()" />
+    </div>
   </header>
 
   <div class="categories-nav" id="catNav"></div>
@@ -273,12 +310,15 @@
   <div class="modal" id="checkoutModal">
     <div class="modal-content">
       <h2>Customer Details</h2>
-      <form id="checkoutForm" onsubmit="submitOrder(event)">
+      <form id="checkoutForm" onsubmit="handleFormSubmit(event)">
         <div class="form-group">
           <input type="text" id="custName" placeholder="Full Name" required />
         </div>
+
+        <div class="form-group">
+          <input type="email" id="custEmail" placeholder="Email Address" required />
+        </div>
         
-        <!-- Mobile Input with +91 Prefix -->
         <div class="form-group">
           <div class="mobile-input-wrapper">
             <span class="country-code">+91</span>
@@ -286,7 +326,6 @@
           </div>
         </div>
 
-        <!-- Delivery Address with Geolocation -->
         <div class="form-group">
           <div class="address-header">
             <label style="font-size: 12px; color: var(--text-muted);">Delivery Address</label>
@@ -297,16 +336,25 @@
           <textarea id="custAddress" placeholder="Enter your full address" rows="3" required></textarea>
         </div>
 
+        <!-- Hidden OTP Field Section -->
+        <div class="form-group" id="otpGroup">
+          <div class="otp-status">An OTP has been sent to your email address.</div>
+          <input type="text" id="custOtp" placeholder="Enter 6-digit OTP" pattern="[0-9]{6}" maxlength="6" />
+        </div>
+
         <div class="modal-actions">
           <button type="button" class="modal-btn btn-cancel" onclick="closeCheckout()">Cancel</button>
-          <button type="submit" class="modal-btn btn-submit" id="submitBtn">Confirm Order</button>
+          <button type="submit" class="modal-btn btn-submit" id="submitBtn">Send OTP</button>
         </div>
       </form>
     </div>
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLNIvkDOxyrdAL1mmALeoIVIa8ZB_TkhTXEyQUvrsUW3HaDrtrK7IOU7oxlz47vN4ROQ/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_z7GJKzizEo2_SqRem7Z4ZRhYdZLxO0OdYLEm28N4S-lrV97RwvenVY_CcJpccrPJwA/exec";
+
+    let generatedOTP = null;
+    let isOtpSent = false;
 
     const itemsData = [
       { id: 1, category: "Soup", name: "Hot & Sour Soup", size: "Full", price: 70 },
@@ -321,138 +369,184 @@
       { id: 10, category: "Shake", name: "Kitkat Shake", size: "Full", price: 120 },
       { id: 11, category: "Shake", name: "Orange Shake", size: "Full", price: 100 },
       { id: 12, category: "Shake", name: "Strawberry", size: "Full", price: 100 },
-      { id: 13, category: "Tea / Coffee", name: "Regular Tea", size: "Full", price: 40 },
-      { id: 14, category: "Tea / Coffee", name: "Regular Coffee", size: "Full", price: 50 },
-      { id: 15, category: "Tea / Coffee", name: "Chocolate Coffee", size: "Full", price: 60 },
-      { id: 16, category: "Tea / Coffee", name: "Green Tea", size: "Full", price: 70 },
-      { id: 17, category: "Tea / Coffee", name: "Black Tea", size: "Full", price: 50 },
-      { id: 18, category: "Tea / Coffee", name: "Hot Chocolate", size: "Full", price: 80 },
-      { id: 19, category: "Starter", name: "French Fries", size: "Full", price: 70 },
-      { id: 20, category: "Starter", name: "Chilly Potato", size: "Full", price: 90 },
-      { id: 21, category: "Starter", name: "Honey Chilly Potato", size: "Full", price: 100 },
-      { id: 22, category: "Starter", name: "Chilly Mashroom", size: "Full", price: 130 },
-      { id: 23, category: "Starter", name: "Veg. Manchurian", size: "Full", price: 120 },
-      { id: 24, category: "Starter", name: "Paneer Manchurian", size: "Full", price: 140 },
-      { id: 25, category: "Starter", name: "Chilly Paneer", size: "Full", price: 140 },
-      { id: 26, category: "Starter", name: "Garlic Paneer", size: "Full", price: 160 },
-      { id: 27, category: "Starter", name: "Veg. Salt & Paper", size: "Full", price: 160 },
-      { id: 28, category: "Noodles", name: "Veg. Noodles", size: "Full", price: 70 },
-      { id: 29, category: "Noodles", name: "Veg. Hakka Noodles", size: "Full", price: 120 },
-      { id: 30, category: "Noodles", name: "Veg. Chilly Garlic Noodles", size: "Full", price: 120 },
-      { id: 31, category: "Noodles", name: "Paneer Noodles", size: "Full", price: 100 },
-      { id: 32, category: "Noodles", name: "Egg Noodles", size: "Full", price: 130 },
-      { id: 33, category: "Rice", name: "Veg. Fried Rice", size: "Full", price: 70 },
-      { id: 34, category: "Rice", name: "Paneer Fried Rice", size: "Full", price: 100 },
-      { id: 35, category: "Rice", name: "Hakka Fried Rice", size: "Full", price: 120 },
-      { id: 36, category: "Rice", name: "Egg Fried Rice", size: "Full", price: 130 },
-      { id: 37, category: "Rice", name: "Tawa Pulao", size: "Full", price: 100 },
-      { id: 38, category: "Rice", name: "Corn Tawa Pulao", size: "Full", price: 130 },
-      { id: 39, category: "Rice", name: "Paneer Tawa Pulao", size: "Full", price: 140 },
-      { id: 40, category: "Rolls", name: "Veg. Spring Rolls", size: "Full", price: 90 },
-      { id: 41, category: "Rolls", name: "Paneer Roll", size: "Full", price: 120 },
-      { id: 42, category: "Rolls", name: "Egg Roll", size: "Full", price: 100 },
-      { id: 43, category: "Sandwich", name: "Veg. Sandwich", size: "Full", price: 60 },
-      { id: 44, category: "Sandwich", name: "Aloo Tikki Sandwich", size: "Full", price: 80 },
-      { id: 45, category: "Sandwich", name: "Chilly Paneer Sandwich", size: "Full", price: 100 },
-      { id: 46, category: "Sandwich", name: "Cheese Sandwich", size: "Full", price: 90 },
-      { id: 47, category: "Pizza", name: "Mexucum Pizza", size: "Small", price: 109 },
-      { id: 48, category: "Pizza", name: "Mexucum Pizza", size: "Medium", price: 160 },
-      { id: 49, category: "Pizza", name: "Margheritta Pizza", size: "Small", price: 100 },
-      { id: 50, category: "Pizza", name: "Margheritta Pizza", size: "Medium", price: 145 },
-      { id: 51, category: "Pizza", name: "Double Cheese Pizza", size: "Small", price: 120 },
-      { id: 52, category: "Pizza", name: "Double Cheese Pizza", size: "Medium", price: 170 },
-      { id: 53, category: "Pizza", name: "Onion Capsicum Pizza", size: "Small", price: 100 },
-      { id: 54, category: "Pizza", name: "Onion Capsicum Pizza", size: "Medium", price: 140 },
-      { id: 55, category: "Pizza", name: "Corn & Paneer Pizza", size: "Small", price: 109 },
-      { id: 56, category: "Pizza", name: "Corn & Paneer Pizza", size: "Medium", price: 160 },
-      { id: 57, category: "Pizza", name: "Fresh Vegi Pizza", size: "Small", price: 105 },
-      { id: 58, category: "Pizza", name: "Fresh Vegi Pizza", size: "Medium", price: 145 },
-      { id: 59, category: "Burger", name: "Veg. Burger", size: "Full", price: 60 },
-      { id: 60, category: "Burger", name: "Cheese Burger", size: "Full", price: 80 },
-      { id: 61, category: "Burger", name: "Paneer Burger", size: "Full", price: 80 },
-      { id: 62, category: "Main Course", name: "Dal Fry", size: "Half", price: 80 },
-      { id: 63, category: "Main Course", name: "Dal Fry", size: "Full", price: 130 },
-      { id: 64, category: "Main Course", name: "Dal Tadka", size: "Half", price: 90 },
-      { id: 65, category: "Main Course", name: "Dal Tadka", size: "Full", price: 140 },
-      { id: 66, category: "Main Course", name: "Punch Dal", size: "Half", price: 90 },
-      { id: 67, category: "Main Course", name: "Punch Dal", size: "Full", price: 140 },
-      { id: 68, category: "Main Course", name: "Dal Makhani", size: "Half", price: 100 },
-      { id: 69, category: "Main Course", name: "Dal Makhani", size: "Full", price: 160 },
-      { id: 70, category: "Main Course", name: "Shahi Paneer", size: "Half", price: 109 },
-      { id: 71, category: "Main Course", name: "Shahi Paneer", size: "Full", price: 190 },
-      { id: 72, category: "Main Course", name: "Paneer Butter Masala", size: "Half", price: 120 },
-      { id: 73, category: "Main Course", name: "Paneer Butter Masala", size: "Full", price: 200 },
-      { id: 74, category: "Main Course", name: "Kadhal Paneer", size: "Half", price: 120 },
-      { id: 75, category: "Main Course", name: "Kadhal Paneer", size: "Full", price: 200 },
-      { id: 76, category: "Main Course", name: "Aloo Gobhi", size: "Half", price: 80 },
-      { id: 77, category: "Main Course", name: "Aloo Gobhi", size: "Full", price: 140 },
-      { id: 78, category: "Main Course", name: "Aloo Jeera", size: "Half", price: 80 },
-      { id: 79, category: "Main Course", name: "Aloo Jeera", size: "Full", price: 140 },
-      { id: 80, category: "Main Course", name: "Mix Veg", size: "Half", price: 109 },
-      { id: 81, category: "Main Course", name: "Mix Veg", size: "Full", price: 180 },
-      { id: 82, category: "Main Course", name: "Aloo Matar", size: "Half", price: 90 },
-      { id: 83, category: "Main Course", name: "Aloo Matar", size: "Full", price: 160 },
-      { id: 84, category: "Raita / Salad", name: "Mix Raita", size: "Full", price: 100 },
-      { id: 85, category: "Raita / Salad", name: "Boondi Raita", size: "Full", price: 90 },
-      { id: 86, category: "Raita / Salad", name: "Pineapple Raita", size: "Full", price: 130 },
-      { id: 87, category: "Raita / Salad", name: "Green Salad", size: "Full", price: 90 },
-      { id: 88, category: "Raita / Salad", name: "Cucumber Salad", size: "Full", price: 70 },
-      { id: 89, category: "Dessert", name: "Gulab Jamun", size: "Full", price: 40 },
-      { id: 90, category: "Dessert", name: "Ice Cream", size: "Full", price: 50 },
-      { id: 91, category: "Combo", name: "Veg. Thali Special", size: "Full", price: 220 },
-      { id: 92, category: "Combo", name: "Manchurian with Rice", size: "Full", price: 120 },
-      { id: 93, category: "Combo", name: "Chilly Paneer with Rice", size: "Full", price: 130 },
-      { id: 94, category: "Combo", name: "Pizza with Cold Drinks", size: "Full", price: 120 }
+      { id: 13, category: "Tea / Coffee", name: "General Tea", size: "Cutting", price: 10 },
+      { id: 14, category: "Tea / Coffee", name: "General Tea", size: "Full", price: 19 },
+      { id: 15, category: "Tea / Coffee", name: "Regular Tea", size: "Full", price: 20 },
+      { id: 16, category: "Tea / Coffee", name: "Regular Coffee", size: "Full", price: 40 },
+      { id: 17, category: "Tea / Coffee", name: "Chocolate Coffee", size: "Full", price: 50 },
+      { id: 18, category: "Tea / Coffee", name: "Green Tea", size: "Full", price: 70 },
+      { id: 19, category: "Tea / Coffee", name: "Black Tea", size: "Full", price: 50 },
+      { id: 20, category: "Tea / Coffee", name: "Hot Chocolate", size: "Full", price: 80 },
+      { id: 21, category: "Starter", name: "French Fries", size: "Full", price: 70 },
+      { id: 22, category: "Starter", name: "Chilly Potato", size: "Full", price: 90 },
+      { id: 23, category: "Starter", name: "Honey Chilly Potato", size: "Full", price: 100 },
+      { id: 24, category: "Starter", name: "Chilly Mashroom", size: "Full", price: 130 },
+      { id: 25, category: "Starter", name: "Veg. Manchurian", size: "Full", price: 120 },
+      { id: 26, category: "Starter", name: "Paneer Manchurian", size: "Full", price: 140 },
+      { id: 27, category: "Starter", name: "Chilly Paneer", size: "Half", price: 80 },
+      { id: 28, category: "Starter", name: "Chilly Paneer", size: "Full", price: 140 },
+      { id: 29, category: "Starter", name: "Garlic Paneer", size: "Half", price: 90 },
+      { id: 30, category: "Starter", name: "Garlic Paneer", size: "Full", price: 160 },
+      { id: 31, category: "Starter", name: "Veg. Salt & Paper", size: "Full", price: 160 },
+      { id: 32, category: "Noodles", name: "Veg. Noodles", size: "Half", price: 40 },
+      { id: 33, category: "Noodles", name: "Veg. Noodles", size: "Full", price: 70 },
+      { id: 34, category: "Noodles", name: "Veg. Hakka Noodles", size: "Half", price: 70 },
+      { id: 35, category: "Noodles", name: "Veg. Hakka Noodles", size: "Full", price: 120 },
+      { id: 36, category: "Noodles", name: "Veg. Chilly Garlic Noodles", size: "Half", price: 70 },
+      { id: 37, category: "Noodles", name: "Veg. Chilly Garlic Noodles", size: "Full", price: 120 },
+      { id: 38, category: "Noodles", name: "Paneer Noodles", size: "Half", price: 60 },
+      { id: 39, category: "Noodles", name: "Paneer Noodles", size: "Full", price: 100 },
+      { id: 40, category: "Noodles", name: "Egg Noodles", size: "Half", price: 70 },
+      { id: 41, category: "Noodles", name: "Egg Noodles", size: "Full", price: 130 },
+      { id: 42, category: "Rice", name: "Veg. Fried Rice", size: "Half", price: 40 },
+      { id: 43, category: "Rice", name: "Veg. Fried Rice", size: "Full", price: 70 },
+      { id: 44, category: "Rice", name: "Paneer Fried Rice", size: "Half", price: 60 },
+      { id: 45, category: "Rice", name: "Paneer Fried Rice", size: "Full", price: 100 },
+      { id: 46, category: "Rice", name: "Hakka Fried Rice", size: "Half", price: 70 },
+      { id: 47, category: "Rice", name: "Hakka Fried Rice", size: "Full", price: 120 },
+      { id: 48, category: "Rice", name: "Egg Fried Rice", size: "Half", price: 70 },
+      { id: 49, category: "Rice", name: "Egg Fried Rice", size: "Full", price: 130 },
+      { id: 50, category: "Rice", name: "Tawa Pulao", size: "Half", price: 60 },
+      { id: 51, category: "Rice", name: "Tawa Pulao", size: "Full", price: 100 },
+      { id: 52, category: "Rice", name: "Corn Tawa Pulao", size: "Half", price: 70 },
+      { id: 53, category: "Rice", name: "Corn Tawa Pulao", size: "Full", price: 130 },
+      { id: 54, category: "Rice", name: "Paneer Tawa Pulao", size: "Half", price: 80 },
+      { id: 55, category: "Rice", name: "Paneer Tawa Pulao", size: "Full", price: 140 },
+      { id: 56, category: "Rolls", name: "Veg. Spring Rolls", size: "Full", price: 90 },
+      { id: 57, category: "Rolls", name: "Paneer Roll", size: "Full", price: 120 },
+      { id: 58, category: "Rolls", name: "Egg Roll", size: "Full", price: 100 },
+      { id: 59, category: "Sandwich", name: "Veg. Sandwich", size: "Full", price: 60 },
+      { id: 60, category: "Sandwich", name: "Aloo Tikki Sandwich", size: "Full", price: 80 },
+      { id: 61, category: "Sandwich", name: "Chilly Paneer Sandwich", size: "Full", price: 100 },
+      { id: 62, category: "Sandwich", name: "Cheese Sandwich", size: "Full", price: 90 },
+      { id: 63, category: "Pizza", name: "Mexucum Pizza", size: "Small", price: 109 },
+      { id: 64, category: "Pizza", name: "Mexucum Pizza", size: "Medium", price: 160 },
+      { id: 65, category: "Pizza", name: "Margheritta Pizza", size: "Small", price: 100 },
+      { id: 66, category: "Pizza", name: "Margheritta Pizza", size: "Medium", price: 145 },
+      { id: 67, category: "Pizza", name: "Double Cheese Pizza", size: "Small", price: 120 },
+      { id: 68, category: "Pizza", name: "Double Cheese Pizza", size: "Medium", price: 170 },
+      { id: 69, category: "Pizza", name: "Onion Capsicum Pizza", size: "Small", price: 100 },
+      { id: 70, category: "Pizza", name: "Onion Capsicum Pizza", size: "Medium", price: 140 },
+      { id: 71, category: "Pizza", name: "Corn & Paneer Pizza", size: "Small", price: 109 },
+      { id: 72, category: "Pizza", name: "Corn & Paneer Pizza", size: "Medium", price: 160 },
+      { id: 73, category: "Pizza", name: "Fresh Vegi Pizza", size: "Small", price: 105 },
+      { id: 74, category: "Pizza", name: "Fresh Vegi Pizza", size: "Medium", price: 145 },
+      { id: 75, category: "Burger", name: "Veg. Burger", size: "Full", price: 60 },
+      { id: 76, category: "Burger", name: "Cheese Burger", size: "Full", price: 80 },
+      { id: 77, category: "Burger", name: "Paneer Burger", size: "Full", price: 80 },
+      { id: 78, category: "Main Course", name: "Dal Fry", size: "Half", price: 80 },
+      { id: 79, category: "Main Course", name: "Dal Fry", size: "Full", price: 130 },
+      { id: 80, category: "Main Course", name: "Dal Tadka", size: "Half", price: 90 },
+      { id: 81, category: "Main Course", name: "Dal Tadka", size: "Full", price: 140 },
+      { id: 82, category: "Main Course", name: "Punch Dal", size: "Half", price: 90 },
+      { id: 83, category: "Main Course", name: "Punch Dal", size: "Full", price: 140 },
+      { id: 84, category: "Main Course", name: "Dal Makhani", size: "Half", price: 100 },
+      { id: 85, category: "Main Course", name: "Dal Makhani", size: "Full", price: 160 },
+      { id: 86, category: "Main Course", name: "Shahi Paneer", size: "Half", price: 109 },
+      { id: 87, category: "Main Course", name: "Shahi Paneer", size: "Full", price: 190 },
+      { id: 88, category: "Main Course", name: "Paneer Butter Masala", size: "Half", price: 120 },
+      { id: 89, category: "Main Course", name: "Paneer Butter Masala", size: "Full", price: 200 },
+      { id: 90, category: "Main Course", name: "Kadhal Paneer", size: "Half", price: 120 },
+      { id: 91, category: "Main Course", name: "Kadhal Paneer", size: "Full", price: 200 },
+      { id: 92, category: "Main Course", name: "Aloo Gobhi", size: "Half", price: 80 },
+      { id: 93, category: "Main Course", name: "Aloo Gobhi", size: "Full", price: 140 },
+      { id: 94, category: "Main Course", name: "Aloo Jeera", size: "Half", price: 80 },
+      { id: 95, category: "Main Course", name: "Aloo Jeera", size: "Full", price: 140 },
+      { id: 96, category: "Main Course", name: "Mix Veg", size: "Half", price: 109 },
+      { id: 97, category: "Main Course", name: "Mix Veg", size: "Full", price: 180 },
+      { id: 98, category: "Main Course", name: "Aloo Matar", size: "Half", price: 90 },
+      { id: 99, category: "Main Course", name: "Aloo Matar", size: "Full", price: 160 },
+      { id: 100, category: "Raita / Salad", name: "Mix Raita", size: "Full", price: 100 },
+      { id: 101, category: "Raita / Salad", name: "Boondi Raita", size: "Full", price: 90 },
+      { id: 102, category: "Raita / Salad", name: "Pineapple Raita", size: "Full", price: 130 },
+      { id: 103, category: "Raita / Salad", name: "Green Salad", size: "Full", price: 90 },
+      { id: 104, category: "Raita / Salad", name: "Cucumber Salad", size: "Full", price: 70 },
+      { id: 105, category: "Dessert", name: "Gulab Jamun", size: "Full", price: 40 },
+      { id: 106, category: "Dessert", name: "Ice Cream", size: "Full", price: 50 },
+      { id: 107, category: "Combo", name: "Veg. Thali Special", size: "Full", price: 220 },
+      { id: 108, category: "Combo", name: "Manchurian with Rice", size: "Full", price: 120 },
+      { id: 109, category: "Combo", name: "Chilly Paneer with Rice", size: "Full", price: 130 },
+      { id: 110, category: "Combo", name: "Pizza with Cold Drinks", size: "Full", price: 120 }
     ];
 
     let cart = {};
 
-    function renderMenu() {
-      const categories = [...new Set(itemsData.map(i => i.category))];
+    function renderMenu(data = itemsData) {
+      const categories = [...new Set(data.map(i => i.category))];
       const nav = document.getElementById("catNav");
       const grid = document.getElementById("menuGrid");
+
+      if (data.length === 0) {
+        grid.innerHTML = `<div class="no-results">No menu items found.</div>`;
+        return;
+      }
 
       nav.innerHTML = categories.map((cat, idx) => 
         `<button class="cat-btn ${idx === 0 ? 'active' : ''}" onclick="filterCat('${cat}', this)">${cat}</button>`
       ).join('');
 
       grid.innerHTML = categories.map(cat => {
-        const catItems = itemsData.filter(i => i.category === cat);
+        const catItems = data.filter(i => i.category === cat);
         return `
           <div class="category-section" id="sec-${cat}">
             <div class="category-title">${cat}</div>
             <div class="grid">
-              ${catItems.map(item => `
+              ${catItems.map(item => {
+                let displayPriceHtml = '';
+                if (item.price >= 20) {
+                  const increasedPrice = item.price + 10;
+                  const finalPrice = Math.round(increasedPrice * 0.85);
+                  displayPriceHtml = `<span class="old-price">₹${increasedPrice}</span> ₹${finalPrice}`;
+                  item.calculatedPrice = finalPrice;
+                } else {
+                  displayPriceHtml = `₹${item.price}`;
+                  item.calculatedPrice = item.price;
+                }
+
+                const currentQty = cart[item.id] || 0;
+
+                return `
                 <div class="item-card">
                   <img class="item-img" src="https://raw.githubusercontent.com/mcf-restaurant/images/main/${item.name}.png" alt="${item.name}"/>
                   <div class="item-details">
                     <div class="item-name">${item.name}</div>
                     <div class="item-meta">Size: ${item.size}</div>
-                    <div class="item-price">₹${item.price}</div>
+                    <div class="item-price">${displayPriceHtml}</div>
                   </div>
                   <div class="qty-control">
                     <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                    <span class="qty-val" id="qty-${item.id}">0</span>
+                    <span class="qty-val" id="qty-${item.id}">${currentQty}</span>
                     <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
                   </div>
                 </div>
-              `).join('')}
+              `}).join('')}
             </div>
           </div>
         `;
       }).join('');
     }
 
+    function filterItems() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      const filtered = itemsData.filter(item => 
+        item.name.toLowerCase().includes(query) || 
+        item.category.toLowerCase().includes(query)
+      );
+      renderMenu(filtered);
+    }
+
     function filterCat(cat, btn) {
       document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById(`sec-${cat}`).scrollIntoView({ behavior: 'smooth' });
+      const el = document.getElementById(`sec-${cat}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
 
     function updateQty(id, change) {
       cart[id] = (cart[id] || 0) + change;
       if (cart[id] <= 0) delete cart[id];
-      document.getElementById(`qty-${id}`).innerText = cart[id] || 0;
+      const qtyElem = document.getElementById(`qty-${id}`);
+      if (qtyElem) qtyElem.innerText = cart[id] || 0;
       updateCartSummary();
     }
 
@@ -462,7 +556,8 @@
       for (const id in cart) {
         const item = itemsData.find(i => i.id == id);
         count += cart[id];
-        total += item.price * cart[id];
+        const priceToUse = item.calculatedPrice !== undefined ? item.calculatedPrice : item.price;
+        total += priceToUse * cart[id];
       }
       document.getElementById('totalItems').innerText = `${count} Items`;
       document.getElementById('totalPrice').innerText = total;
@@ -478,9 +573,12 @@
 
     function closeCheckout() {
       document.getElementById('checkoutModal').style.display = 'none';
+      isOtpSent = false;
+      document.getElementById('otpGroup').style.display = 'none';
+      document.getElementById('submitBtn').innerText = "Send OTP";
+      document.getElementById('custEmail').readOnly = false;
     }
 
-    /* Fetch current location coordinates and convert to address via OpenStreetMap */
     function getCurrentLocation() {
       const addressBox = document.getElementById('custAddress');
       if (!navigator.geolocation) {
@@ -512,14 +610,63 @@
       );
     }
 
-    async function submitOrder(e) {
+    async function handleFormSubmit(e) {
       e.preventDefault();
+      if (!isOtpSent) {
+        await sendOTP();
+      } else {
+        await verifyAndSubmitOrder();
+      }
+    }
+
+    async function sendOTP() {
+      const email = document.getElementById('custEmail').value;
       const submitBtn = document.getElementById('submitBtn');
+
       submitBtn.disabled = true;
-      submitBtn.innerText = "Submitting...";
+      submitBtn.innerText = "Sending OTP...";
+
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "sendOtp",
+            email: email,
+            otp: generatedOTP
+          })
+        });
+
+        isOtpSent = true;
+        document.getElementById('otpGroup').style.display = 'block';
+        document.getElementById('custOtp').required = true;
+        document.getElementById('custEmail').readOnly = true;
+        submitBtn.innerText = "Verify & Confirm Order";
+
+      } catch (err) {
+        alert("Error sending OTP: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    async function verifyAndSubmitOrder() {
+      const enteredOtp = document.getElementById('custOtp').value;
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (enteredOtp !== generatedOTP) {
+        alert("Invalid OTP! Please check your email and try again.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitting Order...";
 
       const rawMobile = document.getElementById('custMobile').value;
-      const fullMobile = rawMobile; // Combines prefix for submission
+      const fullMobile = rawMobile;
 
       const cartItems = Object.keys(cart).map(id => {
         const item = itemsData.find(i => i.id == id);
@@ -527,13 +674,14 @@
           id: item.id,
           name: item.name,
           size: item.size,
-          price: item.price,
+          price: item.calculatedPrice !== undefined ? item.calculatedPrice : item.price,
           quantity: cart[id]
         };
       });
 
       const payload = {
         customerName: document.getElementById('custName').value,
+        customerEmail: document.getElementById('custEmail').value,
         mobile: fullMobile,
         address: document.getElementById('custAddress').value,
         items: cartItems
@@ -551,7 +699,7 @@
       } catch (err) {
         alert("Error submitting order: " + err.message);
         submitBtn.disabled = false;
-        submitBtn.innerText = "Confirm Order";
+        submitBtn.innerText = "Verify & Confirm Order";
       }
     }
 
