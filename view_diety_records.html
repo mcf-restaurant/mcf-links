@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diety Records List - MCF Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; padding: 24px; }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .header { text-align: center; margin-bottom: 24px; }
+    .restaurant-title { color: #f59e0b; font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { color: #94a3b8; font-size: 1rem; }
+
+    /* Filter & Search Bar */
+    .controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; background: rgba(30, 41, 59, 0.95); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .controls input, .controls select { flex: 1; min-width: 180px; padding: 10px 14px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 0.9rem; outline: none; }
+    .controls input:focus, .controls select:focus { border-color: #f59e0b; }
+    .refresh-btn { padding: 10px 20px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .refresh-btn:hover { opacity: 0.9; }
+
+    /* Summary Cards */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .summary-card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 12px; text-align: center; }
+    .summary-card h4 { font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+    .summary-card p { font-size: 1.4rem; font-weight: 700; color: #f8fafc; }
+    .summary-card.due p { color: #ef4444; }
+
+    /* Table Styling */
+    .table-card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    th { background: #0f172a; color: #f59e0b; font-weight: 600; padding: 14px; border-bottom: 1px solid #334155; white-space: nowrap; }
+    td { padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #cbd5e1; white-space: nowrap; }
+    tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+    /* Highlight Rules */
+    tr.has-due { background: rgba(239, 68, 68, 0.08) !important; }
+    .amount-due { color: #ef4444 !important; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .amount-clear { color: #10b981 !important; font-weight: 600; }
+    .cust-badge { font-weight: 700; color: #38bdf8; }
+
+    /* Action Buttons */
+    .action-cell { display: flex; gap: 8px; align-items: center; }
+    .call-btn { display: inline-flex; align-items: center; gap: 6px; background: #ef4444; color: #fff; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.8rem; transition: 0.2s; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); }
+    .call-btn:hover { background: #dc2626; transform: translateY(-1px); }
+
+    .wa-btn { display: inline-flex; align-items: center; gap: 6px; background: #25d366; color: #fff; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.8rem; transition: 0.2s; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.4); }
+    .wa-btn:hover { background: #1da851; transform: translateY(-1px); }
+
+    #statusMessage { text-align: center; padding: 20px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="restaurant-title">MCF RESTAURANT</h1>
+      <p class="subtitle">Diety Customer Directory & Balance Tracker</p>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h4>Total Registered Dieties</h4>
+        <p id="statTotalCount">0</p>
+      </div>
+      <div class="summary-card due">
+        <h4>Pending Dues Count</h4>
+        <p id="statDueCount">0</p>
+      </div>
+      <div class="summary-card due">
+        <h4>Total Due Amount</h4>
+        <p id="statTotalDue">₹0.00</p>
+      </div>
+    </div>
+
+    <!-- Search & Filter Controls -->
+    <div class="controls">
+      <input type="text" id="searchInput" oninput="filterRecords()" placeholder="Search by Name, Mobile, or Cust ID...">
+      <select id="dueFilter" onchange="filterRecords()">
+        <option value="ALL">All Records</option>
+        <option value="DUE_ONLY">Remaining Balance Only (Due)</option>
+        <option value="CLEARED_ONLY">Fully Paid Only</option>
+      </select>
+      <button class="refresh-btn" onclick="loadDietyList()">🔄 Refresh List</button>
+    </div>
+
+    <!-- Records Data Table -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Cust ID</th>
+            <th>Name</th>
+            <th>Mobile Number</th>
+            <th>Diety Type</th>
+            <th>Validity Period</th>
+            <th>Discounted Amt</th>
+            <th>Total Paid</th>
+            <th>Remaining Balance</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="dietyTableBody">
+          <!-- Rows injected via JavaScript -->
+        </tbody>
+      </table>
+      <div id="statusMessage">Loading records...</div>
+    </div>
+  </div>
+
+  <script>
+    const DIETY_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbAbKxWlIxkF3AK-pCSo3Il9JOb4urDPVZma9z2KbblMhlnl5EZsVUdIKYiUSpYqUA-Q/exec";
+    let rawRecords = [];
+
+    window.addEventListener('DOMContentLoaded', loadDietyList);
+
+    async function loadDietyList() {
+      const statusElem = document.getElementById("statusMessage");
+      statusElem.innerText = "Fetching latest records from server...";
+      statusElem.style.display = "block";
+      document.getElementById("dietyTableBody").innerHTML = "";
+
+      try {
+        const res = await fetch(DIETY_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "getAllDieties" })
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.records) {
+          rawRecords = data.records;
+          renderTable(rawRecords);
+          updateSummaryStats(rawRecords);
+          statusElem.style.display = "none";
+        } else {
+          statusElem.innerText = data.message || "Failed to retrieve records.";
+        }
+      } catch (err) {
+        statusElem.innerText = "Network error. Unable to load Diety records.";
+      }
+    }
+
+    function renderTable(records) {
+      const tbody = document.getElementById("dietyTableBody");
+      tbody.innerHTML = "";
+
+      if (records.length === 0) {
+        document.getElementById("statusMessage").innerText = "No matching records found.";
+        document.getElementById("statusMessage").style.display = "block";
+        return;
+      } else {
+        document.getElementById("statusMessage").style.display = "none";
+      }
+
+      records.forEach(rec => {
+        const remaining = parseFloat(rec.remainingAmount) || 0;
+        const hasDue = remaining > 0;
+        
+        // Dynamic Fields for WhatsApp message
+        const completedDiets = rec.completedDiets || rec.consumedDiets || 0;
+        const totalDiets = rec.totalDiets || rec.dietyDays || 0;
+        const cleanMobile = rec.mobile ? rec.mobile.replace(/\D/g, '') : '';
+        
+        // Construct WhatsApp text message
+        const waText = `Dear ${rec.name}, Your Diets are ${completedDiets}/${totalDiets}, Pending Payment is ₹${remaining.toFixed(2)}. Please completed your Pending Amount`;
+        const waUrl = `https://wa.me/${cleanMobile}?text=${encodeURIComponent(waText)}`;
+
+        const tr = document.createElement("tr");
+        if (hasDue) tr.classList.add("has-due");
+
+        tr.innerHTML = `
+          <td><span class="cust-badge">#${rec.custId}</span></td>
+          <td><strong>${rec.name}</strong></td>
+          <td>${rec.mobile}</td>
+          <td>${rec.dietyType}</td>
+          <td>${rec.fromDate} to ${rec.toDate} (${rec.dietyDays} Days)</td>
+          <td>₹${parseFloat(rec.discountedAmount).toFixed(2)}</td>
+          <td>₹${parseFloat(rec.totalPaid).toFixed(2)}</td>
+          <td>
+            ${hasDue 
+              ? `<span class="amount-due">₹${remaining.toFixed(2)}</span>` 
+              : `<span class="amount-clear">₹0.00 (Cleared)</span>`}
+          </td>
+          <td>
+            ${hasDue 
+              ? `<div class="action-cell">
+                   <a href="tel:${rec.mobile}" class="call-btn">📞 Call</a>
+                   <a href="${waUrl}" target="_blank" class="wa-btn">💬 WhatsApp</a>
+                 </div>` 
+              : `<span style="color: #64748b; font-size: 0.8rem;">No Action Required</span>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterRecords() {
+      const searchText = document.getElementById("searchInput").value.toLowerCase().trim();
+      const dueFilter = document.getElementById("dueFilter").value;
+
+      const filtered = rawRecords.filter(rec => {
+        const remaining = parseFloat(rec.remainingAmount) || 0;
+        const matchesSearch = rec.name.toLowerCase().includes(searchText) ||
+                              rec.mobile.includes(searchText) ||
+                              rec.custId.toString().includes(searchText);
+
+        let matchesDue = true;
+        if (dueFilter === "DUE_ONLY") matchesDue = remaining > 0;
+        if (dueFilter === "CLEARED_ONLY") matchesDue = remaining <= 0;
+
+        return matchesSearch && matchesDue;
+      });
+
+      renderTable(filtered);
+    }
+
+    function updateSummaryStats(records) {
+      let totalCount = records.length;
+      let dueCount = 0;
+      let totalDueAmount = 0;
+
+      records.forEach(rec => {
+        const rem = parseFloat(rec.remainingAmount) || 0;
+        if (rem > 0) {
+          dueCount++;
+          totalDueAmount += rem;
+        }
+      });
+
+      document.getElementById("statTotalCount").innerText = totalCount;
+      document.getElementById("statDueCount").innerText = dueCount;
+      document.getElementById("statTotalDue").innerText = `₹${totalDueAmount.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>
