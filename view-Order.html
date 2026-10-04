@@ -149,56 +149,54 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfjc2yZAuxVfqEsajHgOIZ8oZ0Z1MVhfarLtg4n6vBe4n8i1gvjqe5Lw9Jw48IDKImcg/exec";
 
-    // --- BUZZER / AUDIO SETUP ---
-    let audioCtx = null;
-    let buzzerInterval = null;
+    // --- AUDIO & ALERTS SETUP ---
     let audioEnabled = false;
+    let isBuzzerPlaying = false;
+    let previousPendingCount = 0;
+
+    // Standard HTML5 Audio (Replace URL with your hosted audio file if preferred)
+    const buzzerAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    buzzerAudio.loop = true;
 
     function enableAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      // Request notification permissions for background alerts on mobile
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+
       audioEnabled = true;
+      buzzerAudio.play().then(() => {
+        buzzerAudio.pause(); // Unlock audio playback context on mobile
+        buzzerAudio.currentTime = 0;
+      }).catch(err => console.log("Audio unlock failed:", err));
+
       const btn = document.getElementById('audioToggleBtn');
       btn.innerText = "🔔 Sound Active";
       btn.classList.add('enabled');
     }
 
-    // Play a single buzzer beep sound using Web Audio API
-    function playBeep() {
-      if (!audioEnabled || !audioCtx) return;
-
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sawtooth'; // Buzzer sound frequency curve
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Pitch (880 Hz)
-      
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.4);
-    }
-
     function startBuzzer() {
-      if (!buzzerInterval) {
-        buzzerInterval = setInterval(() => {
-          playBeep();
-        }, 800); // Repeat beep every 800ms
-      }
+      if (!audioEnabled || isBuzzerPlaying) return;
+      
+      buzzerAudio.play().then(() => {
+        isBuzzerPlaying = true;
+      }).catch(err => console.log("Buzzer playback error:", err));
     }
 
     function stopBuzzer() {
-      if (buzzerInterval) {
-        clearInterval(buzzerInterval);
-        buzzerInterval = null;
+      if (isBuzzerPlaying) {
+        buzzerAudio.pause();
+        buzzerAudio.currentTime = 0;
+        isBuzzerPlaying = false;
+      }
+    }
+
+    function sendSystemNotification(title, body) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(title, {
+          body: body,
+          icon: 'https://cdn-icons-png.flaticon.com/512/3602/3602145.png'
+        });
       }
     }
     // ----------------------------
@@ -211,14 +209,21 @@
         const data = await res.json();
 
         if (data.status === "success" && data.orders.length > 0) {
-          // Check if any order is still Pending
-          const hasPendingOrders = data.orders.some(order => order.status !== "Delivered");
+          const pendingOrders = data.orders.filter(order => order.status !== "Delivered");
+          const hasPendingOrders = pendingOrders.length > 0;
 
           if (hasPendingOrders) {
             startBuzzer();
+
+            // Trigger system notification if new pending order arrived
+            if (pendingOrders.length > previousPendingCount) {
+              sendSystemNotification("🔔 New Order Received!", `You have ${pendingOrders.length} pending order(s).`);
+            }
           } else {
             stopBuzzer();
           }
+
+          previousPendingCount = pendingOrders.length;
 
           grid.innerHTML = data.orders.map(order => {
             const isDelivered = order.status === "Delivered";
@@ -259,6 +264,7 @@
           }).join('');
         } else {
           stopBuzzer();
+          previousPendingCount = 0;
           grid.innerHTML = '<div class="no-orders">No orders received today yet!</div>';
         }
       } catch (err) {
@@ -287,8 +293,25 @@
       }
     }
 
-    // Auto-refresh every 5 seconds to detect new incoming orders automatically
-    setInterval(loadTodaysOrders, 5000);
+    // --- BACKGROUND TIMER (WEB WORKER) ---
+    // Prevents browser throttling when Chrome is minimized
+    const workerBlob = new Blob([`
+      setInterval(() => {
+        postMessage('fetch');
+      }, 5000);
+    `], { type: 'application/javascript' });
+
+    const worker = new Worker(URL.createObjectURL(workerBlob));
+    worker.onmessage = () => {
+      loadTodaysOrders();
+    };
+
+    // Auto-resume sound state when user returns to tab
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && audioEnabled) {
+        loadTodaysOrders();
+      }
+    });
 
     // Initial load
     loadTodaysOrders();
