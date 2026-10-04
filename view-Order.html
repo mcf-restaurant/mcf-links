@@ -30,11 +30,14 @@
     }
 
     header h1 { color: var(--accent); font-size: 24px; }
-    .refresh-btn {
+    .header-btns { display: flex; gap: 10px; }
+    
+    .refresh-btn, .audio-btn {
       background: #3b82f6; color: white; border: none; padding: 8px 16px;
       border-radius: 6px; cursor: pointer; font-weight: 600;
     }
     .refresh-btn:hover { background: #2563eb; }
+    .audio-btn.enabled { background: #22c55e; }
 
     .orders-grid {
       display: grid;
@@ -44,7 +47,6 @@
       margin: 0 auto;
     }
 
-    /* Fancy Order Card Styling */
     .order-card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -98,7 +100,6 @@
       margin-top: 8px;
     }
 
-    /* Status Toggle Button */
     .status-btn {
       width: 100%;
       padding: 10px;
@@ -135,7 +136,10 @@
 
   <header>
     <h1>📋 Today's Orders Dashboard</h1>
-    <button class="refresh-btn" onclick="loadTodaysOrders()">🔄 Refresh</button>
+    <div class="header-btns">
+      <button id="audioToggleBtn" class="audio-btn" onclick="enableAudio()">🔔 Enable Sound</button>
+      <button class="refresh-btn" onclick="loadTodaysOrders()">🔄 Refresh</button>
+    </div>
   </header>
 
   <div class="orders-grid" id="ordersGrid">
@@ -145,15 +149,77 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfjc2yZAuxVfqEsajHgOIZ8oZ0Z1MVhfarLtg4n6vBe4n8i1gvjqe5Lw9Jw48IDKImcg/exec";
 
+    // --- BUZZER / AUDIO SETUP ---
+    let audioCtx = null;
+    let buzzerInterval = null;
+    let audioEnabled = false;
+
+    function enableAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      audioEnabled = true;
+      const btn = document.getElementById('audioToggleBtn');
+      btn.innerText = "🔔 Sound Active";
+      btn.classList.add('enabled');
+    }
+
+    // Play a single buzzer beep sound using Web Audio API
+    function playBeep() {
+      if (!audioEnabled || !audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sawtooth'; // Buzzer sound frequency curve
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Pitch (880 Hz)
+      
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.4);
+    }
+
+    function startBuzzer() {
+      if (!buzzerInterval) {
+        buzzerInterval = setInterval(() => {
+          playBeep();
+        }, 800); // Repeat beep every 800ms
+      }
+    }
+
+    function stopBuzzer() {
+      if (buzzerInterval) {
+        clearInterval(buzzerInterval);
+        buzzerInterval = null;
+      }
+    }
+    // ----------------------------
+
     async function loadTodaysOrders() {
       const grid = document.getElementById('ordersGrid');
-      grid.innerHTML = '<div class="no-orders">Updating orders...</div>';
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL);
         const data = await res.json();
 
         if (data.status === "success" && data.orders.length > 0) {
+          // Check if any order is still Pending
+          const hasPendingOrders = data.orders.some(order => order.status !== "Delivered");
+
+          if (hasPendingOrders) {
+            startBuzzer();
+          } else {
+            stopBuzzer();
+          }
+
           grid.innerHTML = data.orders.map(order => {
             const isDelivered = order.status === "Delivered";
             return `
@@ -172,7 +238,7 @@
                   <div class="items-list">
                     ${order.items.map(item => `
                       <div class="item-row">
-                        <span>${item.name} (${item.size}) x ${item.quantity}</span>
+                        <span>${item.name} (${item.size}) x${item.quantity}</span>
                         <span>₹${item.price}</span>
                       </div>
                     `).join('')}
@@ -192,6 +258,7 @@
             `;
           }).join('');
         } else {
+          stopBuzzer();
           grid.innerHTML = '<div class="no-orders">No orders received today yet!</div>';
         }
       } catch (err) {
@@ -209,7 +276,7 @@
         const data = await res.json();
 
         if (data.status === "success") {
-          loadTodaysOrders(); // Refresh cards after updating status
+          loadTodaysOrders();
         } else {
           alert("Failed to update status: " + data.message);
           btn.disabled = false;
@@ -220,7 +287,10 @@
       }
     }
 
-    // Auto-load on page start
+    // Auto-refresh every 10 seconds to detect new incoming orders automatically
+    setInterval(loadTodaysOrders, 10000);
+
+    // Initial load
     loadTodaysOrders();
   </script>
 </body>
