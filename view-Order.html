@@ -149,24 +149,39 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfjc2yZAuxVfqEsajHgOIZ8oZ0Z1MVhfarLtg4n6vBe4n8i1gvjqe5Lw9Jw48IDKImcg/exec";
 
+    // --- SERVICE WORKER REGISTRATION (FOR MOBILE CHROME NOTIFICATIONS) ---
+    let swRegistration = null;
+
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('activate', e => self.clients.claim());
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+
+      navigator.serviceWorker.register(swUrl).then(reg => {
+        swRegistration = reg;
+      }).catch(err => console.log('SW registration error:', err));
+    }
+    // ---------------------------------------------------------------------
+
     // --- AUDIO & ALERTS SETUP ---
     let audioEnabled = false;
     let isBuzzerPlaying = false;
     let previousPendingCount = 0;
 
-    // Standard HTML5 Audio (Replace URL with your hosted audio file if preferred)
     const buzzerAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
     buzzerAudio.loop = true;
 
     function enableAudio() {
-      // Request notification permissions for background alerts on mobile
       if ("Notification" in window && Notification.permission !== "granted") {
         Notification.requestPermission();
       }
 
       audioEnabled = true;
       buzzerAudio.play().then(() => {
-        buzzerAudio.pause(); // Unlock audio playback context on mobile
+        buzzerAudio.pause();
         buzzerAudio.currentTime = 0;
       }).catch(err => console.log("Audio unlock failed:", err));
 
@@ -193,10 +208,20 @@
 
     function sendSystemNotification(title, body) {
       if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(title, {
-          body: body,
-          icon: 'https://cdn-icons-png.flaticon.com/512/3602/3602145.png'
-        });
+        // Mobile Chrome requires serviceWorker registration to show notifications
+        if (swRegistration && swRegistration.showNotification) {
+          swRegistration.showNotification(title, {
+            body: body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/3602/3602145.png',
+            vibrate: [200, 100, 200]
+          });
+        } else {
+          try {
+            new Notification(title, { body: body });
+          } catch (e) {
+            console.log("Desktop notification fallback error:", e);
+          }
+        }
       }
     }
     // ----------------------------
@@ -215,7 +240,6 @@
           if (hasPendingOrders) {
             startBuzzer();
 
-            // Trigger system notification if new pending order arrived
             if (pendingOrders.length > previousPendingCount) {
               sendSystemNotification("🔔 New Order Received!", `You have ${pendingOrders.length} pending order(s).`);
             }
@@ -294,7 +318,6 @@
     }
 
     // --- BACKGROUND TIMER (WEB WORKER) ---
-    // Prevents browser throttling when Chrome is minimized
     const workerBlob = new Blob([`
       setInterval(() => {
         postMessage('fetch');
@@ -306,7 +329,6 @@
       loadTodaysOrders();
     };
 
-    // Auto-resume sound state when user returns to tab
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && audioEnabled) {
         loadTodaysOrders();
