@@ -55,11 +55,12 @@
     </div>
 
     <!-- Conditional Navigation Links -->
-    <a id="viewOwnDietBtn" href="add_new_diety.html" target="_blank" class="view-data-btn">📦 Add/Update New Diety</a>
+    <a id="addNewDietBtn" href="add_new_diety.html" target="_blank" class="view-data-btn">📦 Add/Update New Diety</a>
     <a id="viewDataBtn" href="diety_analysis.html" target="_blank" class="view-data-btn">📊 View Diet Sheet</a>
+    <a id="viewRecordBtn" href="view_diety_records.html" target="_blank" class="view-data-btn">📦 View Diety and Inform</a>
     <a id="viewOrdersBtn" href="view-Order.html" target="_blank" class="view-data-btn">📦 View Today Orders</a>
+
     <a id="viewOwnDietBtn" href="view-Diets.html" target="_blank" class="view-data-btn">📦 View Your Diets</a>
-    <a id="viewOwnDietBtn" href="view_diety_records.html" target="_blank" class="view-data-btn">📦 View Diety and Inform</a>
     <button class="logout-btn" onclick="logout()">Log Out</button>
   </div>
 
@@ -86,7 +87,9 @@
 
         // Render options based on MCF Diety role
         if (mcfDiety === 'admin') {
+          document.getElementById("addNewDietBtn").style.display = "block";
           document.getElementById("viewDataBtn").style.display = "block";
+          document.getElementById("viewRecordBtn").style.display = "block";
           document.getElementById("viewOrdersBtn").style.display = "block";
         }
         
