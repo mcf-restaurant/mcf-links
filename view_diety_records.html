@@ -169,7 +169,7 @@
         const cleanMobile = rec.mobile ? rec.mobile.replace(/\D/g, '') : '';
         
         // Construct WhatsApp text message
-        const waText = `Dear ${rec.name}, Your Diets are ${completedDiets}/${totalDiets}, Pending Payment is ₹${remaining.toFixed(2)}. Please completed your Pending Amount`;
+        const waText = `Dear ${rec.name}, Your Diets are completed ${completedDiets}/${totalDiets}, Pending Payment is ₹${remaining.toFixed(2)}. Please completed your Pending Amount. Thanking You: MCF Owner`;
         const waUrl = `https://wa.me/${cleanMobile}?text=${encodeURIComponent(waText)}`;
 
         const tr = document.createElement("tr");
