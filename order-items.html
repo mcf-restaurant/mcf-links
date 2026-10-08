@@ -494,7 +494,7 @@
               ${catItems.map(item => {
                 let displayPriceHtml = '';
                 if (item.price >= 20) {
-                  const increasedPrice = item.price + 10;
+                  const increasedPrice = item.price + 0;
                   const finalPrice = Math.round(increasedPrice * 0.85);
                   displayPriceHtml = `<span class="old-price">₹${increasedPrice}</span> ₹${finalPrice}`;
                   item.calculatedPrice = finalPrice;
