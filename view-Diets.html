@@ -4,246 +4,447 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Diets - MCF Restaurant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 520px; padding: 32px; text-align: center; }
-    .header-title { color: #f59e0b; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
-    .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 24px; }
-    
-    /* Attendance KPI Container */
-    .kpi-card {
-      background: rgba(145, 160, 195, 0.6);
-      border: 1px solid rgba(222, 184, 184, 0.08);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 20px;
-      text-align: left;
+    :root {
+      --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
-    .kpi-header {
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .dashboard-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 580px;
+      padding: 28px;
+    }
+
+    /* Header Section */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .header-title {
+      color: var(--accent-gold);
+      font-size: clamp(1.4rem, 5vw, 1.6rem);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: clamp(0.8rem, 3vw, 0.85rem);
+    }
+
+    #statusMessage {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .status-error { color: #f87171; }
+    .status-info { color: var(--accent-gold); }
+
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* KPI Hero Card */
+    .kpi-hero {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    
+    .kpi-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
     }
-    .kpi-title {
-      font-size: 15px;
+    .kpi-heading {
+      font-size: 0.9rem;
       font-weight: 700;
-      color: #f8fafc;
+      letter-spacing: 0.3px;
     }
-    .kpi-badge {
-      background: rgba(30, 21, 129, 0.15);
+    .kpi-pill {
+      background: rgba(16, 185, 129, 0.15);
       color: #34d399;
       padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
+      border-radius: 30px;
+      font-size: 0.7rem;
       font-weight: 700;
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
-    .kpi-badge.badge-extra {
+    .kpi-pill.badge-extra {
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
-    .stats-grid {
+    .metrics-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 16px;
     }
-    .stat-box {
-      background: rgba(15, 23, 42, 0.8);
-      padding: 10px;
-      border-radius: 10px;
+    .metric-card {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 12px;
+      padding: 10px 6px;
       text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
-    .stat-value {
-      font-size: 15px;
+    .metric-val {
+      font-size: clamp(0.85rem, 3vw, 1rem);
       font-weight: 800;
     }
-    .stat-label {
-      font-size: 10px;
-      color: #94a3b8;
+    .metric-lbl {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Circular Progress Ring */
+    .circular-progress-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    
+    .circular-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(#10b981 0deg, rgba(255, 255, 255, 0.05) 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+      transition: background 0.8s ease;
+      position: relative;
+    }
+
+    .circular-ring.extra-ring {
+      background: conic-gradient(#ef4444 0deg, rgba(255, 255, 255, 0.05) 0deg);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .circular-inner {
+      width: 100px;
+      height: 100px;
+      background: #0f172a;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .circular-percentage {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #34d399;
+      line-height: 1.1;
+    }
+    .circular-ring.extra-ring .circular-percentage {
+      color: #f87171;
+    }
+
+    .circular-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       margin-top: 2px;
     }
 
-    /* Progress Bar Layout */
-    .progress-wrapper {
-      position: relative;
-      background: #0f172a;
-      border-radius: 12px;
-      height: 32px;
-      padding: 3px;
-      display: flex;
-      gap: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-      margin-bottom: 12px;
-      overflow: hidden;
-    }
-    .progress-segment {
-      height: 100%;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 800;
-      color: #ffffff;
-      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .regular-progress {
-      background: linear-gradient(90deg, #10b981, #34d399);
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-    }
-    .extra-progress {
-      background: linear-gradient(90deg, #ef4444, #f87171);
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-      animation: pulse-red 2s infinite alternate;
-    }
-
-    @keyframes pulse-red {
-      0% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.3); }
-      100% { box-shadow: 0 0 14px rgba(239, 68, 68, 0.7); }
-    }
-
-    /* Status Banner */
-    .status-banner {
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 10px;
-      padding: 10px 12px;
+    .status-alert {
       display: flex;
       align-items: center;
       gap: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.4);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
-    .status-icon {
-      width: 30px;
-      height: 30px;
+    .alert-icon {
+      width: 26px;
+      height: 26px;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      font-size: 14px;
+      font-size: 0.85rem;
       flex-shrink: 0;
     }
-    .status-info-text {
+    .alert-text-group {
       display: flex;
       flex-direction: column;
     }
-    .status-info-text .title-text {
-      font-size: 12px;
+    .alert-headline {
+      font-size: 0.75rem;
       font-weight: 700;
     }
-    .status-info-text .sub-text {
-      font-size: 11px;
-      color: #94a3b8;
+    .alert-subtext {
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
 
-    .details-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 24px; }
-    .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e293b; }
-    .detail-item:last-child { border-bottom: none; }
-    .label { color: #94a3b8; font-size: 0.85rem; }
-    .value { color: #f8fafc; font-weight: 600; font-size: 0.9rem; word-break: break-word; }
-    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
-    .badge-yes { background: #10b981; color: #ffffff; }
-    .badge-no { background: #ef4444; color: #ffffff; }
-    .btn-back { display: block; width: 100%; background: #334155; color: #fff; text-decoration: none; font-weight: 600; border-radius: 8px; padding: 12px; font-size: 0.95rem; text-align: center; transition: background 0.2s; }
-    .btn-back:hover { background: #475569; }
-    #statusMessage { margin-bottom: 16px; font-size: 0.9rem; min-height: 20px; }
-    .status-error { color: #ef4444; }
-    .status-info { color: #f59e0b; }
+    /* Profile & Details SaaS Card */
+    .profile-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .profile-header-flex {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 14px;
+    }
+
+    .profile-avatar {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      flex-shrink: 0;
+    }
+
+    .profile-names {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .profile-real-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-cust-id {
+      font-size: 0.72rem;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .details-list-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .detail-row-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .detail-row-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-row-value {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f8fafc;
+      text-align: right;
+      word-break: break-all;
+    }
+
+    /* Badges */
+    .status-badge {
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .badge-yes { background: #059669; color: #fff; }
+    .badge-no { background: #dc2626; color: #fff; }
+
+    /* Navigation Back Button */
+    .back-btn-wrapper {
+      margin-top: 18px;
+    }
+    .btn-dashboard {
+      display: block;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.85rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .btn-dashboard:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Media query adjustments for smaller mobile displays */
+    @media (max-width: 400px) {
+      body { padding: 8px; }
+      .dashboard-container { padding: 16px; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1 class="header-title">MCF RESTAURANT</h1>
-    <p class="subtitle">Your Diet Subscription & Analysis Details</p>
+  <div class="dashboard-container">
+    <div class="brand-header">
+      <h1 class="header-title">MCF RESTAURANT</h1>
+      <p class="subtitle">Your Diet Subscription & Analysis Details</p>
+    </div>
 
     <div id="statusMessage" class="status-info">Validating session and fetching data...</div>
 
-    <div class="details-box" id="dietDataBox" style="display: none;">
+    <div class="content-wrapper" id="dietDataBox" style="display: none;">
       
-      <!-- Integrated Attendance KPI Section -->
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">Attendance KPI</span>
-          <span class="kpi-badge" id="completion-tag">0% Completed</span>
+      <!-- Circular Progress KPI Hero Section -->
+      <div class="kpi-hero">
+        <div class="kpi-top-row">
+          <span class="kpi-heading">Attendance KPI</span>
+          <span class="kpi-pill" id="completion-tag">0% Completed</span>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-value" id="reg-days" style="color: #34d399;">0/0</div>
-            <div class="stat-label">Regular Days</div>
+        <div class="metrics-row">
+          <div class="metric-card">
+            <div class="metric-val" id="reg-days" style="color: #34d399;">0/0</div>
+            <div class="metric-lbl">Regular Days</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-value" id="extra-days" style="color: #f87171;">+0</div>
-            <div class="stat-label">Extra Days</div>
+          <div class="metric-card">
+            <div class="metric-val" id="extra-days" style="color: #f87171;">+0</div>
+            <div class="metric-lbl">Extra Days</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-value" id="total-days" style="color: #f8fafc;">0 Logged</div>
-            <div class="stat-label">Total Days</div>
+          <div class="metric-card">
+            <div class="metric-val" id="total-days" style="color: #f8fafc;">0 Logged</div>
+            <div class="metric-lbl">Total Days</div>
           </div>
         </div>
 
-        <div class="progress-wrapper">
-          <div class="progress-segment regular-progress" id="reg-bar" style="width: 0%;">0 Days</div>
-          <div class="progress-segment extra-progress" id="extra-bar" style="width: 0%; display: none;">+0 Extra</div>
+        <div class="circular-progress-container">
+          <div class="circular-ring" id="circular-ring">
+            <div class="circular-inner">
+              <span class="circular-percentage" id="ring-percent">0%</span>
+              <span class="circular-label" id="ring-label">Progress</span>
+            </div>
+          </div>
         </div>
 
-        <div class="status-banner">
-          <div class="status-icon" id="status-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div>
-          <div class="status-info-text">
-            <span class="title-text" id="banner-title" style="color: #34d399;">Subscription Active</span>
-            <span class="sub-text" id="banner-desc">Attendance tracked dynamically based on plan.</span>
+        <div class="status-alert">
+          <div class="alert-icon" id="status-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div>
+          <div class="alert-text-group">
+            <span class="alert-headline" id="banner-title" style="color: #34d399;">Subscription Active</span>
+            <span class="alert-subtext" id="banner-desc">Attendance tracked dynamically based on plan.</span>
           </div>
         </div>
       </div>
 
-      <div class="detail-item">
-        <span class="label">Customer ID</span>
-        <span class="value" id="valCustID">-</span>
+      <!-- SaaS Profile & Detailed Timeline List View -->
+      <div class="profile-card">
+        <div class="profile-header-flex">
+          <div class="profile-avatar" id="avatarInitial">A</div>
+          <div class="profile-names">
+            <span class="profile-real-name" id="valName">-</span>
+            <span class="profile-cust-id">Customer ID: <span id="valCustID">-</span></span>
+          </div>
+        </div>
+
+        <div class="details-list-vertical">
+          <div class="detail-row-item">
+            <span class="detail-row-label">📱 Mobile Number</span>
+            <span class="detail-row-value" id="valMobile">-</span>
+          </div>
+          <div class="detail-row-item">
+            <span class="detail-row-label">🥗 Diet Type</span>
+            <span class="detail-row-value" id="valDietType">-</span>
+          </div>
+          <div class="detail-row-item">
+            <span class="detail-row-label">📅 Start Date</span>
+            <span class="detail-row-value" id="valFromDate">-</span>
+          </div>
+          <div class="detail-row-item">
+            <span class="detail-row-label">📦 Total Diets Plan</span>
+            <span class="detail-row-value" id="valTotalDiets">-</span>
+          </div>
+          <div class="detail-row-item">
+            <span class="detail-row-label">⏳ Remaining Diets</span>
+            <span class="detail-row-value" id="valRemainingDiets">-</span>
+          </div>
+          <div class="detail-row-item">
+            <span class="detail-row-label">💳 Pending Payment</span>
+            <span class="detail-row-value" id="valPendingPayment" style="color: #fbbf24;">-</span>
+          </div>
+          <div class="detail-row-item">
+            <span class="detail-row-label">⚡ Today Punch-In</span>
+            <div id="valTodayPunch">-</div>
+          </div>
+        </div>
       </div>
-      <div class="detail-item">
-        <span class="label">Name</span>
-        <span class="value" id="valName">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Mobile Number</span>
-        <span class="value" id="valMobile">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Diet Type</span>
-        <span class="value" id="valDietType">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">From Date</span>
-        <span class="value" id="valFromDate">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Total Diets</span>
-        <span class="value" id="valTotalDiets">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Pending Payment</span>
-        <span class="value" id="valPendingPayment">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Remaining Diets</span>
-        <span class="value" id="valRemainingDiets">-</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Today Punch-In</span>
-        <span class="value" id="valTodayPunch">-</span>
-      </div>
+
     </div>
 
-    <a href="success.html" class="btn-back">← Back to Dashboard</a>
+    <div class="back-btn-wrapper">
+      <a href="success.html" class="btn-dashboard">← Back to Dashboard</a>
+    </div>
   </div>
 
   <script>
@@ -280,11 +481,13 @@
 
         if (data.success) {
           statusElem.style.display = "none";
-          dataBox.style.display = "block";
+          dataBox.style.display = "flex";
 
           const diet = data.dietData;
+          const fullName = diet.name || 'N/A';
           document.getElementById("valCustID").innerText = diet.custID || 'N/A';
-          document.getElementById("valName").innerText = diet.name || 'N/A';
+          document.getElementById("valName").innerText = fullName;
+          document.getElementById("avatarInitial").innerText = fullName !== 'N/A' ? fullName.charAt(0).toUpperCase() : 'U';
           document.getElementById("valMobile").innerText = diet.mobileNumber || 'N/A';
           document.getElementById("valDietType").innerText = diet.dietType || 'N/A';
           document.getElementById("valFromDate").innerText = diet.fromDate ? new Date(diet.fromDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-') : 'N/A';
@@ -296,7 +499,6 @@
           const badgeClass = punchStatus === 'YES' ? 'badge-yes' : 'badge-no';
           document.getElementById("valTodayPunch").innerHTML = `<span class="status-badge ${badgeClass}">${punchStatus}</span>`;
 
-          // Dynamic calculation for Attendance KPI
           const totalDiets = parseInt(diet.totalDiets, 10) || 0;
           const remainingDiets = parseInt(diet.remainingDiets, 10) || 0;
           const attendedDays = Math.max(0, totalDiets - remainingDiets);
@@ -313,42 +515,37 @@
     }
 
     function renderAttendanceKPI(attended, maxTarget) {
-      if (maxTarget <= 0) maxTarget = 30; // Default fallback to 30 days if plan target isn't available
+      if (maxTarget <= 0) maxTarget = 30;
 
       const regularAttended = Math.min(attended, maxTarget);
       const extraAttended = Math.max(0, attended - maxTarget);
       
-      const overallCapacity = Math.max(maxTarget, attended);
-      const regPercentage = (regularAttended / overallCapacity) * 100;
-      const extraPercentage = (extraAttended / overallCapacity) * 100;
       const completionPercentage = Math.round((attended / maxTarget) * 100);
+      const deg = Math.min(360, (attended / maxTarget) * 360);
 
-      // DOM Elements
       const completionTag = document.getElementById('completion-tag');
       const regDays = document.getElementById('reg-days');
       const extraDays = document.getElementById('extra-days');
       const totalDays = document.getElementById('total-days');
-      const regBar = document.getElementById('reg-bar');
-      const extraBar = document.getElementById('extra-bar');
+      const circularRing = document.getElementById('circular-ring');
+      const ringPercent = document.getElementById('ring-percent');
+      const ringLabel = document.getElementById('ring-label');
       const statusIcon = document.getElementById('status-icon');
       const bannerTitle = document.getElementById('banner-title');
       const bannerDesc = document.getElementById('banner-desc');
 
-      // Update text values
       regDays.innerText = `${regularAttended}/${maxTarget}`;
       extraDays.innerText = `+${extraAttended}`;
       totalDays.innerText = `${attended} Logged`;
       completionTag.innerText = `${completionPercentage}% Completed`;
 
-      // Update Progress Bar Segments
-      regBar.style.width = `${regPercentage}%`;
-      regBar.innerText = regularAttended > 0 ? `${regularAttended} Days` : '';
+      ringPercent.innerText = `${completionPercentage}%`;
+      ringLabel.innerText = `${attended} of ${maxTarget} Days`;
 
       if (extraAttended > 0) {
-        extraBar.style.width = `${extraPercentage}%`;
-        extraBar.style.display = 'flex';
-        extraBar.innerText = `+${extraAttended} Extra`;
-        completionTag.className = 'kpi-badge badge-extra';
+        circularRing.style.background = `conic-gradient(#ef4444 ${deg}deg, rgba(255, 255, 255, 0.05) ${deg}deg)`;
+        circularRing.classList.add('extra-ring');
+        completionTag.className = 'kpi-pill badge-extra';
 
         statusIcon.innerText = '⚡';
         statusIcon.style.background = 'rgba(239, 68, 68, 0.15)';
@@ -357,8 +554,9 @@
         bannerTitle.style.color = '#f87171';
         bannerDesc.innerText = 'User has exceeded the standard base subscription limit.';
       } else {
-        extraBar.style.display = 'none';
-        completionTag.className = 'kpi-badge';
+        circularRing.style.background = `conic-gradient(#10b981 ${deg}deg, rgba(255, 255, 255, 0.05) ${deg}deg)`;
+        circularRing.classList.remove('extra-ring');
+        completionTag.className = 'kpi-pill';
 
         statusIcon.innerText = '✓';
         statusIcon.style.background = 'rgba(16, 185, 129, 0.15)';
