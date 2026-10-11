@@ -35,7 +35,7 @@
     .submit-btn { width: 100%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; font-weight: 600; border: none; border-radius: 8px; padding: 12px; font-size: 1rem; cursor: pointer; margin-top: 8px; }
     .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     
-    #statusMessage { margin-top: 16px; font-size: 0.9rem; min-height: 20px; line-height: 1.5; }
+    #statusMessage { margin-top: 16px; margin-bottom: 16px; font-size: 0.9rem; min-height: 20px; line-height: 1.5; }
     .status-success { color: #10b981; }
     .status-error { color: #ef4444; }
     .status-info { color: #f59e0b; }
@@ -55,7 +55,8 @@
       <button type="button" class="btn-search" onclick="fetchDietyRecord()">Search Record</button>
       <button type="button" class="btn-new" onclick="resetFormToNew()">+ Add New</button>
     </div>
-
+    <div id="statusMessage"></div>
+    
     <form id="dietyForm" onsubmit="handleDietySubmit(event)">
       <!-- Hidden CUST_ID to distinguish Create vs Edit Mode -->
       <input type="hidden" id="custId" value="">
@@ -166,7 +167,6 @@
       <button type="submit" class="submit-btn" id="submitBtn">Save Diety Record</button>
     </form>
 
-    <div id="statusMessage"></div>
   </div>
 
   <script>
