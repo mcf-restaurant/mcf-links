@@ -3,229 +3,358 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Diets - MCF Restaurant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Your Diets · MCF Restaurant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #0f172a);
-      --card-bg: rgba(15, 23, 42, 0.85);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --accent-gold: #fbbf24;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --page: #f3efe8;
+      --surface: #ffffff;
+      --surface-2: #faf8f4;
+      --ink: #15151b;
+      --ink-soft: #74747f;
+      --line: rgba(21, 21, 27, 0.09);
+      --gold: #d99a1f;
+      --gold-deep: #a97d16;
+      --emerald: #10b981;
+      --danger: #ef4444;
+      --r-xl: 30px;
+      --r-lg: 22px;
+      --r-md: 14px;
+      --r-sm: 11px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: var(--bg-gradient);
-      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(900px 520px at 8% -12%, #fff4dd 0%, transparent 60%),
+        radial-gradient(760px 520px at 102% 4%, #e6f0ff 0%, transparent 58%),
+        var(--page);
+      color: var(--ink);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 16px;
+      align-items: flex-start;
+      padding: 24px 16px;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
     }
 
+    /* ============ SHELL ============ */
     .dashboard-container {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-color);
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
       width: 100%;
-      max-width: 580px;
-      padding: 28px;
+      max-width: 560px;
+      margin: auto 0;
+      background: var(--surface);
+      border: 1px solid rgba(21, 21, 27, 0.06);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      box-shadow:
+        0 34px 64px -34px rgba(21, 21, 27, 0.30),
+        0 2px 6px rgba(21, 21, 27, 0.04);
     }
 
-    /* Header Section */
+    /* ============ HEADER ============ */
     .brand-header {
-      text-align: center;
-      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
     }
-    .header-title {
-      color: var(--accent-gold);
-      font-size: clamp(1.4rem, 5vw, 1.6rem);
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: linear-gradient(150deg, #23232c, #0c0c11);
+      color: #f3c04a;
+      font-size: 1.05rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 12px 22px -14px rgba(21, 21, 27, 0.95);
     }
+
+    .header-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
     .subtitle {
-      color: var(--text-muted);
-      font-size: clamp(0.8rem, 3vw, 0.85rem);
-    }
-
-    #statusMessage {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
+      font-size: 0.74rem;
       font-weight: 500;
+      color: var(--ink-soft);
+      margin-top: 3px;
     }
-    .status-error { color: #f87171; }
-    .status-info { color: var(--accent-gold); }
 
+    /* ============ STATUS MESSAGE ============ */
+    #statusMessage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 14px;
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    #statusMessage::before {
+      content: '';
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      animation: spin 0.75s linear infinite;
+    }
+
+    #statusMessage.status-error::before {
+      content: '!';
+      width: 19px;
+      height: 19px;
+      border: none;
+      animation: none;
+      display: grid;
+      place-items: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: rgba(239, 68, 68, 0.13);
+      color: #dc2626;
+    }
+
+    .status-info { color: var(--gold-deep); }
+    .status-error { color: #cf3a3a; background: #fdf3f3; border-color: rgba(239, 68, 68, 0.16); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============ LAYOUT ============ */
     .content-wrapper {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    /* KPI Hero Card */
-    .kpi-hero {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    
+
+    .content-wrapper > * {
+      animation: riseIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .content-wrapper > *:nth-child(2) { animation-delay: 0.09s; }
+
+    /* ============ HERO / KPI ============ */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+      border-radius: var(--r-lg);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background:
+        radial-gradient(520px 220px at 100% 0%, rgba(217, 154, 31, 0.22), transparent 68%),
+        radial-gradient(420px 220px at 0% 100%, rgba(16, 185, 129, 0.10), transparent 70%),
+        linear-gradient(160deg, #22222b, #0d0d12);
+      box-shadow: 0 22px 42px -26px rgba(13, 13, 18, 0.9);
+      color: #fff;
+    }
+
     .kpi-top-row {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 18px;
     }
+
     .kpi-heading {
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-    .kpi-pill {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      padding: 4px 10px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .kpi-pill.badge-extra {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-
-    .metrics-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .metric-card {
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 12px;
-      padding: 10px 6px;
-      text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .metric-val {
-      font-size: clamp(0.85rem, 3vw, 1rem);
+      font-size: 0.68rem;
       font-weight: 800;
-    }
-    .metric-lbl {
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      margin-top: 3px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.55);
     }
 
-    /* Circular Progress Ring */
-    .circular-progress-container {
+    .kpi-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      background: rgba(16, 185, 129, 0.16);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.32);
+    }
+
+    .kpi-pill.badge-extra {
+      background: rgba(239, 68, 68, 0.16);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.32);
+    }
+
+    .hero-body {
       display: flex;
-      justify-content: center;
       align-items: center;
+      gap: 18px;
       margin-bottom: 16px;
-      position: relative;
-    }
-    
-    .circular-ring {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: conic-gradient(#10b981 0deg, rgba(255, 255, 255, 0.05) 0deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
-      transition: background 0.8s ease;
-      position: relative;
     }
 
-    .circular-ring.extra-ring {
-      background: conic-gradient(#ef4444 0deg, rgba(255, 255, 255, 0.05) 0deg);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    /* ---- Circular ring ---- */
+    .circular-ring {
+      width: 132px;
+      height: 132px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(#10b981 0deg, rgba(255, 255, 255, 0.07) 0deg);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 30px -6px rgba(16, 185, 129, 0.55);
+      transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.45s ease;
     }
 
     .circular-inner {
-      width: 100px;
-      height: 100px;
-      background: #0f172a;
+      width: 104px;
+      height: 104px;
       border-radius: 50%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+      background: #131318;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.75);
     }
 
     .circular-percentage {
-      font-size: 1.15rem;
+      font-size: 1.22rem;
       font-weight: 800;
+      letter-spacing: -0.02em;
       color: #34d399;
       line-height: 1.1;
     }
-    .circular-ring.extra-ring .circular-percentage {
-      color: #f87171;
-    }
 
     .circular-label {
-      font-size: 0.6rem;
-      color: var(--text-muted);
+      margin-top: 3px;
+      padding: 0 8px;
+      font-size: 0.56rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.45);
+      text-align: center;
+      line-height: 1.3;
     }
 
+    .circular-ring.extra-ring {
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 32px -4px rgba(239, 68, 68, 0.6);
+    }
+    .circular-ring.extra-ring .circular-percentage { color: #f87171; }
+
+    /* ---- Metric rows ---- */
+    .metrics-row {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .metric-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: var(--r-sm);
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      min-width: 0;
+    }
+
+    .metric-val {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    .metric-lbl {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ---- Status alert ---- */
     .status-alert {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(15, 23, 42, 0.4);
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      gap: 11px;
+      padding: 11px 13px;
+      border-radius: var(--r-md);
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.07);
     }
+
     .alert-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
+      width: 32px;
+      height: 32px;
       flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      transition: background 0.3s ease, color 0.3s ease;
     }
+
     .alert-text-group {
       display: flex;
       flex-direction: column;
-    }
-    .alert-headline {
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-    .alert-subtext {
-      font-size: 0.7rem;
-      color: var(--text-muted);
+      gap: 2px;
+      min-width: 0;
     }
 
-    /* Profile & Details SaaS Card */
+    .alert-headline {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .alert-subtext {
+      font-size: 0.67rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.48);
+      line-height: 1.4;
+    }
+
+    /* ============ PROFILE / DETAILS ============ */
     .profile-card {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
+      padding: 18px;
+      border-radius: var(--r-lg);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
     }
 
     .profile-header-flex {
@@ -233,158 +362,227 @@
       align-items: center;
       gap: 12px;
       padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      margin-bottom: 14px;
+      margin-bottom: 6px;
+      border-bottom: 1px dashed rgba(21, 21, 27, 0.12);
     }
 
     .profile-avatar {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #0f172a;
-      font-weight: 800;
-      font-size: 1.1rem;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      width: 46px;
+      height: 46px;
       flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: linear-gradient(140deg, #f5c95a, #d99a1f);
+      color: #221a05;
+      font-size: 1.15rem;
+      font-weight: 800;
+      box-shadow: 0 10px 20px -10px rgba(217, 154, 31, 0.95);
     }
 
     .profile-names {
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      gap: 3px;
+      min-width: 0;
     }
 
     .profile-real-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #fff;
+      font-size: 0.97rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .profile-cust-id {
-      font-size: 0.72rem;
-      color: var(--accent-gold);
-      font-weight: 600;
+      font-size: 0.69rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--gold-deep);
     }
 
     .details-list-vertical {
       display: flex;
       flex-direction: column;
-      gap: 10px;
     }
 
     .detail-row-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: rgba(15, 23, 42, 0.4);
-      padding: 9px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      justify-content: space-between;
+      gap: 14px;
+      padding: 11px 2px;
+      border-bottom: 1px solid var(--line);
     }
 
+    .detail-row-item:last-child { border-bottom: none; }
+
     .detail-row-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+      white-space: nowrap;
     }
 
     .detail-row-value {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #f8fafc;
+      font-size: 0.83rem;
+      font-weight: 800;
+      color: var(--ink);
       text-align: right;
-      word-break: break-all;
+      word-break: break-word;
     }
 
-    /* Badges */
+    /* ============ BADGES ============ */
     .status-badge {
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: 700;
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
     }
-    .badge-yes { background: #059669; color: #fff; }
-    .badge-no { background: #dc2626; color: #fff; }
 
-    /* Navigation Back Button */
-    .back-btn-wrapper {
-      margin-top: 18px;
+    .badge-yes {
+      background: #e6f8f1;
+      color: #0d8f61;
+      border: 1px solid #bee9d7;
     }
+
+    .badge-no {
+      background: #fdecec;
+      color: #cf3a3a;
+      border: 1px solid #f7cece;
+    }
+
+    /* ============ BACK BUTTON ============ */
+    .back-btn-wrapper { margin-top: 18px; }
+
     .btn-dashboard {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-main);
+      padding: 14px;
+      border-radius: var(--r-md);
+      background: var(--ink);
+      color: #fff;
       text-decoration: none;
-      font-weight: 600;
-      border-radius: 12px;
-      padding: 12px;
       font-size: 0.85rem;
-      text-align: center;
-      transition: all 0.2s ease;
-    }
-    .btn-dashboard:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      box-shadow: 0 16px 28px -18px rgba(21, 21, 27, 0.95);
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
     }
 
-    /* Media query adjustments for smaller mobile displays */
-    @media (max-width: 400px) {
-      body { padding: 8px; }
-      .dashboard-container { padding: 16px; }
+    .btn-dashboard:hover {
+      background: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 20px 32px -18px rgba(21, 21, 27, 0.95);
+    }
+
+    .btn-dashboard:active { transform: translateY(0); }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 430px) {
+      body { padding: 14px 12px; }
+      .dashboard-container { padding: 18px; border-radius: 24px; }
+
+      .hero-body {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+
+      .circular-ring { align-self: center; }
+
+      .metrics-row {
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+      }
+
+      .metric-card {
+        flex: 1;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 10px;
+      }
+
+      .metric-lbl {
+        text-align: left;
+        font-size: 0.54rem;
+        letter-spacing: 0.06em;
+        white-space: normal;
+      }
+
+      .metric-val { font-size: 0.88rem; }
+
+      .detail-row-item { gap: 10px; }
+      .detail-row-label { font-size: 0.72rem; gap: 6px; }
+      .detail-row-value { font-size: 0.79rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="dashboard-container">
-    <div class="brand-header">
-      <h1 class="header-title">MCF RESTAURANT</h1>
-      <p class="subtitle">Your Diet Subscription & Analysis Details</p>
-    </div>
 
-    <div id="statusMessage" class="status-info">Validating session and fetching data...</div>
+    <!-- Header -->
+    <header class="brand-header">
+      <div class="brand-mark">M</div>
+      <div>
+        <h1 class="header-title">MCF Restaurant</h1>
+        <p class="subtitle">Your Diet Subscription &amp; Analysis Details</p>
+      </div>
+    </header>
+
+    <div id="statusMessage" class="status-info">Validating session and fetching data…</div>
 
     <div class="content-wrapper" id="dietDataBox" style="display: none;">
-      
-      <!-- Circular Progress KPI Hero Section -->
-      <div class="kpi-hero">
+
+      <!-- ===== KPI HERO ===== -->
+      <section class="hero">
+
         <div class="kpi-top-row">
           <span class="kpi-heading">Attendance KPI</span>
           <span class="kpi-pill" id="completion-tag">0% Completed</span>
         </div>
 
-        <div class="metrics-row">
-          <div class="metric-card">
-            <div class="metric-val" id="reg-days" style="color: #34d399;">0/0</div>
-            <div class="metric-lbl">Regular Days</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-val" id="extra-days" style="color: #f87171;">+0</div>
-            <div class="metric-lbl">Extra Days</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-val" id="total-days" style="color: #f8fafc;">0 Logged</div>
-            <div class="metric-lbl">Total Days</div>
-          </div>
-        </div>
-
-        <div class="circular-progress-container">
+        <div class="hero-body">
           <div class="circular-ring" id="circular-ring">
             <div class="circular-inner">
               <span class="circular-percentage" id="ring-percent">0%</span>
               <span class="circular-label" id="ring-label">Progress</span>
+            </div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-card">
+              <div class="metric-val" id="reg-days" style="color: #34d399;">0/0</div>
+              <div class="metric-lbl">Regular Days</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="extra-days" style="color: #f87171;">+0</div>
+              <div class="metric-lbl">Extra Days</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="total-days" style="color: #ffffff;">0 Logged</div>
+              <div class="metric-lbl">Total Days</div>
             </div>
           </div>
         </div>
@@ -396,10 +594,12 @@
             <span class="alert-subtext" id="banner-desc">Attendance tracked dynamically based on plan.</span>
           </div>
         </div>
-      </div>
 
-      <!-- SaaS Profile & Detailed Timeline List View -->
-      <div class="profile-card">
+      </section>
+
+      <!-- ===== PROFILE & DETAILS ===== -->
+      <section class="profile-card">
+
         <div class="profile-header-flex">
           <div class="profile-avatar" id="avatarInitial">A</div>
           <div class="profile-names">
@@ -431,20 +631,22 @@
           </div>
           <div class="detail-row-item">
             <span class="detail-row-label">💳 Pending Payment</span>
-            <span class="detail-row-value" id="valPendingPayment" style="color: #fbbf24;">-</span>
+            <span class="detail-row-value" id="valPendingPayment" style="color: #d99a1f;">-</span>
           </div>
           <div class="detail-row-item">
             <span class="detail-row-label">⚡ Today Punch-In</span>
             <div id="valTodayPunch">-</div>
           </div>
         </div>
-      </div>
+
+      </section>
 
     </div>
 
     <div class="back-btn-wrapper">
       <a href="success.html" class="btn-dashboard">← Back to Dashboard</a>
     </div>
+
   </div>
 
   <script>
@@ -519,7 +721,7 @@
 
       const regularAttended = Math.min(attended, maxTarget);
       const extraAttended = Math.max(0, attended - maxTarget);
-      
+
       const completionPercentage = Math.round((attended / maxTarget) * 100);
       const deg = Math.min(360, (attended / maxTarget) * 360);
 
@@ -543,7 +745,7 @@
       ringLabel.innerText = `${attended} of ${maxTarget} Days`;
 
       if (extraAttended > 0) {
-        circularRing.style.background = `conic-gradient(#ef4444 ${deg}deg, rgba(255, 255, 255, 0.05) ${deg}deg)`;
+        circularRing.style.background = `conic-gradient(#ef4444 ${deg}deg, rgba(255, 255, 255, 0.07) ${deg}deg)`;
         circularRing.classList.add('extra-ring');
         completionTag.className = 'kpi-pill badge-extra';
 
@@ -554,7 +756,7 @@
         bannerTitle.style.color = '#f87171';
         bannerDesc.innerText = 'User has exceeded the standard base subscription limit.';
       } else {
-        circularRing.style.background = `conic-gradient(#10b981 ${deg}deg, rgba(255, 255, 255, 0.05) ${deg}deg)`;
+        circularRing.style.background = `conic-gradient(#10b981 ${deg}deg, rgba(255, 255, 255, 0.07) ${deg}deg)`;
         circularRing.classList.remove('extra-ring');
         completionTag.className = 'kpi-pill';
 
