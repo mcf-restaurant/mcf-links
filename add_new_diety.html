@@ -1,326 +1,680 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diety Management - MCF Restaurant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 580px; padding: 32px; text-align: center; }
-    .restaurant-title { color: #f59e0b; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
-    .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px; }
-    
-    /* Top Action Bar */
-    .action-bar {display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 0px; border: 1px solid #334155; }
-    .action-bar input {flex: 1 1 100%; min-width: 0;   padding: 10px;   border-radius: 6px;   border: 1px solid #334155;   background: #0f172a;   color: #fff;   font-size: 0.9rem;}
-    .action-bar button {flex: 1;   padding: 10px 16px;   border-radius: 6px;   border: none;   font-weight: 600;   cursor: pointer;   transition: 0.2s;   font-size: 0.85rem; }
-    .btn-search { background: #3b82f6; color: white; }
-    .btn-new { background: #10b981; color: white; }
-    .btn-search:hover { background: #2563eb; }
-    .btn-new:hover { background: #059669; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCF Restaurant — Diety Registration &amp; Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===================== THEME TOKENS ===================== */
+  :root{
+    --bg:#f6f7f2;
+    --surface:#ffffff;
+    --surface-2:#fbfcf8;
+    --ink:#16241d;
+    --muted:#6b7d72;
+    --line:#e3e8dd;
+    --brand:#2f7d5d;
+    --brand-ink:#1d5c43;
+    --brand-soft:#e6f2ec;
+    --accent:#f2a341;
+    --accent-soft:#fdf1de;
+    --accent-ink:#9a6412;
+    --danger:#c9503f;
+    --danger-soft:#fbeae7;
+    --radius:22px;
+    --radius-sm:14px;
+    --pill:999px;
+    --shadow:0 1px 2px rgba(22,36,29,.04), 0 18px 40px rgba(22,36,29,.08);
+    --shadow-sm:0 1px 2px rgba(22,36,29,.05);
+  }
 
-    .form-row { display: flex; gap: 12px; }
-    .form-row .input-group { flex: 1; min-width: 0; }
-    .input-group { margin-bottom: 16px; text-align: left; }
-    .input-group label { display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px; }
-    .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background-color: #0f172a; color: #f8fafc; font-size: 0.95rem; outline: none; }
-    .input-group input:focus, .input-group select:focus { border-color: #f59e0b; }
-    .input-group input[readonly] { background-color: #1e293b; color: #94a3b8; cursor: not-allowed; }
-    
-    .input-calc { background-color: rgba(245, 158, 11, 0.1) !important; color: #f59e0b !important; font-weight: 600 !important; border-color: rgba(245, 158, 11, 0.3) !important; }
-    .input-rem { background-color: rgba(239, 68, 68, 0.1) !important; color: #ef4444 !important; font-weight: 600 !important; border-color: rgba(239, 68, 68, 0.3) !important; }
-    
-    .submit-btn { width: 100%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; font-weight: 600; border: none; border-radius: 8px; padding: 12px; font-size: 1rem; cursor: pointer; margin-top: 8px; }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    
-    #statusMessage { margin-top: 16px; margin-bottom: 16px; font-size: 0.9rem; min-height: 20px; line-height: 1.5; }
-    .status-success { color: #10b981; }
-    .status-error { color: #ef4444; }
-    .status-info { color: #f59e0b; }
-    .cust-badge { display: inline-block; font-size: 0.95rem; font-weight: 700; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 12px; border-radius: 6px; margin-top: 6px; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .mode-tag { background: rgba(245, 158, 11, 0.2); color: #f59e0b; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
-  </style>
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ min-height:100%; }
+  body{
+    font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 480px at 12% -8%, #e9f3ec 0%, transparent 60%),
+      radial-gradient(900px 420px at 92% 0%, #fdf3e4 0%, transparent 55%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:32px 18px 72px;
+  }
+
+  /* ===================== SHELL ===================== */
+  .shell{
+    width:100%;
+    max-width:660px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    color-scheme:light;
+  }
+
+  /* ===================== APP BAR ===================== */
+  .appbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:16px 22px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#ffffff,#fbfdfb);
+  }
+  .brand{ display:flex; align-items:center; gap:11px; }
+  .brand .logo{
+    width:38px; height:38px; border-radius:12px; flex:0 0 auto;
+    display:grid; place-items:center; font-size:17px;
+    background:var(--brand-soft); border:1px solid #d5e8de;
+  }
+  .brand-name{ font-weight:800; font-size:1.02rem; letter-spacing:-.02em; line-height:1.1; }
+  .brand-name small{
+    display:block; font-weight:500; font-size:.68rem; color:var(--muted);
+    letter-spacing:.02em; margin-top:3px;
+  }
+  .appbar .pill{
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:.72rem; font-weight:700; padding:6px 12px;
+    border-radius:var(--pill); background:var(--brand-soft); color:var(--brand-ink);
+    white-space:nowrap;
+  }
+  .appbar .pill .live{
+    width:7px; height:7px; border-radius:50%; background:var(--brand);
+    box-shadow:0 0 0 3px rgba(47,125,93,.18);
+  }
+
+  /* ===================== HERO ===================== */
+  .hero{ padding:24px 22px 4px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:.68rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--brand-ink); background:var(--brand-soft);
+    padding:5px 11px; border-radius:var(--pill);
+  }
+  .hero h1{
+    margin:13px 0 6px; font-size:1.42rem; line-height:1.22;
+    letter-spacing:-.025em; font-weight:800;
+  }
+  .hero p{ color:var(--muted); font-size:.86rem; line-height:1.6; }
+
+  /* ===================== ACTION BAR ===================== */
+  .action-bar{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin:20px 22px 0; padding:13px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+  }
+  .action-bar input{
+    flex:1 1 190px; min-width:0;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:.9rem;
+    outline:none;
+    transition:.15s ease;
+  }
+  .action-bar input::placeholder{ color:#9fada2; }
+  .action-bar input:focus{
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px rgba(47,125,93,.14);
+  }
+  .action-bar button{
+    flex:0 0 auto;
+    padding:12px 20px;
+    border-radius:var(--pill);
+    border:1px solid transparent;
+    font-family:inherit;
+    font-size:.85rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:.18s ease;
+    white-space:nowrap;
+  }
+  .btn-search{ background:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(47,125,93,.22); }
+  .btn-search:hover{ background:var(--brand-ink); }
+  .btn-new{ background:var(--accent-soft); color:var(--accent-ink); border-color:#f2ddba; }
+  .btn-new:hover{ background:#fbe8cd; }
+
+  /* ===================== STATUS MESSAGE ===================== */
+  #statusMessage{
+    margin:0 22px;
+    padding:0;
+    font-size:.86rem;
+    font-weight:500;
+    line-height:1.6;
+    text-align:left;
+  }
+  #statusMessage:empty{ display:none; }
+  #statusMessage:not(:empty){
+    margin-top:16px;
+    padding:13px 15px;
+    border-radius:var(--radius-sm);
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    animation:rise .28s ease both;
+  }
+  @keyframes rise{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+  .status-success{ color:var(--brand-ink) !important; background:var(--brand-soft) !important; border-color:#cfe4d9 !important; }
+  .status-error{ color:var(--danger) !important; background:var(--danger-soft) !important; border-color:#f2cfc9 !important; }
+  .status-info{ color:var(--accent-ink) !important; background:var(--accent-soft) !important; border-color:#f2ddba !important; }
+
+  .cust-badge{
+    display:inline-block; font-size:.88rem; font-weight:800;
+    background:#fff; color:var(--brand-ink);
+    padding:5px 13px; border-radius:var(--pill);
+    border:1px solid #cfe4d9; margin-top:7px;
+  }
+
+  /* ===================== FORM CARDS ===================== */
+  .form{ padding:16px 22px 22px; }
+  .card{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-top:16px;
+    box-shadow:var(--shadow-sm);
+  }
+  .card-head{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; margin-bottom:16px;
+  }
+  .card-head h2{
+    font-size:.98rem; letter-spacing:-.015em; font-weight:700;
+    display:flex; align-items:center; gap:9px;
+  }
+  .card-head h2 .ic{
+    width:26px; height:26px; border-radius:9px; flex:0 0 auto;
+    display:grid; place-items:center; font-size:13px;
+    background:var(--brand-soft);
+  }
+  .card-head .hint{
+    font-size:.7rem; font-weight:600; color:var(--muted);
+    letter-spacing:.04em; text-transform:uppercase; white-space:nowrap;
+  }
+
+  /* ===================== INPUTS ===================== */
+  .form-row{ display:flex; gap:14px; }
+  .form-row .input-group{ flex:1; min-width:0; }
+  .input-group{ margin-bottom:14px; text-align:left; }
+  .form-row:last-of-type .input-group{ margin-bottom:0; }
+  .input-group label{
+    display:block; font-size:.76rem; font-weight:600;
+    color:var(--muted); margin-bottom:7px;
+  }
+  .req{ color:var(--danger); margin-left:2px; }
+  .input-group input,
+  .input-group select{
+    width:100%;
+    padding:12px 13px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:.9rem;
+    outline:none;
+    transition:.15s ease;
+  }
+  .input-group input::placeholder{ color:#9fada2; }
+  .input-group input:focus,
+  .input-group select:focus{
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px rgba(47,125,93,.14);
+  }
+  .input-group input[readonly]{ cursor:not-allowed; }
+
+  .input-calc{
+    background:var(--brand-soft) !important;
+    color:var(--brand-ink) !important;
+    font-weight:700 !important;
+    border-color:#cfe4d9 !important;
+  }
+  .input-rem{
+    background:var(--danger-soft) !important;
+    color:var(--danger) !important;
+    font-weight:700 !important;
+    border-color:#f2cfc9 !important;
+  }
+  .input-rem.is-settled{
+    background:var(--brand-soft) !important;
+    color:var(--brand-ink) !important;
+    border-color:#cfe4d9 !important;
+  }
+
+  /* ===================== MODE TAG ===================== */
+  .mode-tag{
+    display:inline-block;
+    background:rgba(242,163,65,.18);
+    color:var(--accent-ink);
+    font-size:.66rem; font-weight:800;
+    padding:3px 10px; border-radius:var(--pill);
+    text-transform:uppercase; letter-spacing:.06em;
+    margin-left:8px; vertical-align:middle;
+  }
+
+  /* ===================== PAYMENT PROGRESS ===================== */
+  .progress{ margin-top:18px; }
+  .progress-meta{
+    display:flex; justify-content:space-between;
+    font-size:.74rem; font-weight:600; color:var(--muted);
+    margin-bottom:8px;
+  }
+  .track{
+    height:9px; border-radius:var(--pill);
+    background:var(--line); overflow:hidden;
+  }
+  .track i{
+    display:block; height:100%; width:0%;
+    border-radius:var(--pill);
+    background:linear-gradient(90deg,var(--brand),#4fa87f);
+    transition:width .35s ease;
+  }
+
+  /* ===================== SUBMIT ===================== */
+  .form-foot{ padding:22px 22px 26px; text-align:center; }
+  .submit-btn{
+    width:100%;
+    padding:15px 20px;
+    border:none;
+    border-radius:var(--pill);
+    font-family:inherit;
+    font-size:.95rem;
+    font-weight:700;
+    letter-spacing:.01em;
+    color:#fff;
+    cursor:pointer;
+    background:linear-gradient(135deg,var(--brand) 0%,var(--brand-ink) 100%);
+    box-shadow:0 8px 20px rgba(47,125,93,.26);
+    transition:.18s ease;
+  }
+  .submit-btn:hover{ transform:translateY(-1px); box-shadow:0 12px 26px rgba(47,125,93,.3); }
+  .submit-btn:disabled{
+    opacity:.5; cursor:not-allowed;
+    transform:none; box-shadow:none;
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width:520px){
+    body{ padding:14px 10px 48px; }
+    .shell{ border-radius:22px; }
+    .hero h1{ font-size:1.22rem; }
+    .form-row{ flex-direction:column; gap:0; }
+    .card-head .hint{ display:none; }
+    .action-bar button{ flex:1 1 100%; }
+  }
+</style>
 </head>
 <body>
 
-  <div class="card">
-    <h1 class="restaurant-title">MCF RESTAURANT</h1>
-    <p class="subtitle">Diety Registration & Management</p>
+  <div class="shell">
 
-    <!-- Search & New Actions -->
+    <!-- ============ APP BAR ============ -->
+    <header class="appbar">
+      <div class="brand">
+        <span class="logo">🥗</span>
+        <span class="brand-name">
+          MCF Restaurant
+          <small>Diety Registration &amp; Management</small>
+        </span>
+      </div>
+      <span class="pill"><span class="live"></span> Connected</span>
+    </header>
+
+    <!-- ============ HERO ============ -->
+    <div class="hero">
+      <span class="eyebrow">● Diety Counter</span>
+      <h1>Register &amp; manage diety customers</h1>
+      <p>Add a new customer, or search an existing <strong>CUST ID</strong> to edit their plan, payment and balance.</p>
+    </div>
+
+    <!-- ============ SEARCH & NEW ============ -->
     <div class="action-bar">
       <input type="number" id="searchCustId" placeholder="Enter Cust ID to Edit">
       <button type="button" class="btn-search" onclick="fetchDietyRecord()">Search Record</button>
       <button type="button" class="btn-new" onclick="resetFormToNew()">+ Add New</button>
     </div>
+
     <div id="statusMessage"></div>
-    
+
+    <!-- ============ FORM ============ -->
     <form id="dietyForm" onsubmit="handleDietySubmit(event)">
-      <!-- Hidden CUST_ID to distinguish Create vs Edit Mode -->
       <input type="hidden" id="custId" value="">
 
-      <div class="input-group">
-        <label for="name">Full Name <span id="formModeTag" class="mode-tag">New Record</span></label>
-        <input type="text" id="name" placeholder="Enter full name" required>
+      <!-- ---------- CUSTOMER ---------- -->
+      <section class="card">
+        <div class="card-head">
+          <h2><span class="ic">👤</span> Customer details</h2>
+          <span class="hint">Required</span>
+        </div>
+
+        <div class="input-group">
+          <label for="name">Full Name <span class="req">*</span><span id="formModeTag" class="mode-tag">New Record</span></label>
+          <input type="text" id="name" placeholder="Enter full name" required>
+        </div>
+
+        <div class="input-group">
+          <label for="mobile">Mobile Number <span class="req">*</span></label>
+          <input type="tel" id="mobile" pattern="[0-9]{10}" maxlength="10"
+                 placeholder="10-digit mobile number"
+                 title="Please enter a valid 10-digit mobile number" required>
+        </div>
+      </section>
+
+      <!-- ---------- DIETY ---------- -->
+      <section class="card">
+        <div class="card-head">
+          <h2><span class="ic">🗓️</span> Diety plan</h2>
+          <span class="hint">Auto duration</span>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="dietyType">Diety Type</label>
+            <select id="dietyType" onchange="recalculateAll()" required>
+              <option value="ONE TIME">ONE TIME</option>
+              <option value="TWO TIME">TWO TIME</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="status">Status</label>
+            <select id="status" required>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="dietyDays">Diety Days</label>
+            <input type="number" id="dietyDays" value="30" min="1" oninput="recalculateAll()" required>
+          </div>
+
+          <div class="input-group">
+            <label for="totalDiets">Total Diets (Calculated)</label>
+            <input type="number" id="totalDiets" class="input-calc" readonly>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="fromDate">From Date</label>
+            <input type="date" id="fromDate" onchange="recalculateAll()" required>
+          </div>
+
+          <div class="input-group">
+            <label for="toDate">To Date (Calculated)</label>
+            <input type="date" id="toDate" class="input-calc" readonly>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- PAYMENT ---------- -->
+      <section class="card">
+        <div class="card-head">
+          <h2><span class="ic">💳</span> Payment &amp; installments</h2>
+          <span class="hint">Live balance</span>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="totalAmount">Total Amount (₹) <span class="req">*</span></label>
+            <input type="number" id="totalAmount" value="0" min="0" oninput="recalculateAll()" required>
+          </div>
+
+          <div class="input-group">
+            <label for="paymentMode">Payment Mode</label>
+            <select id="paymentMode" required>
+              <option value="UPI">UPI</option>
+              <option value="CASH">CASH</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="discountPercent">Discount (%)</label>
+            <input type="number" id="discountPercent" value="0" min="0" max="100" oninput="recalculateAll()">
+          </div>
+
+          <div class="input-group">
+            <label for="discountedAmount">Discounted Amount (₹)</label>
+            <input type="number" id="discountedAmount" class="input-calc" readonly>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="firstInstallment">1st Installment Paid (₹)</label>
+            <input type="number" id="firstInstallment" value="0" min="0" oninput="recalculateAll()">
+          </div>
+
+          <div class="input-group">
+            <label for="secondInstallment">2nd Installment Paid (₹)</label>
+            <input type="number" id="secondInstallment" value="0" min="0" oninput="recalculateAll()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="totalPaid">Total Paid (₹)</label>
+            <input type="number" id="totalPaid" class="input-calc" readonly>
+          </div>
+
+          <div class="input-group">
+            <label for="remainingAmount">Remaining Amount (₹)</label>
+            <input type="number" id="remainingAmount" class="input-rem" readonly>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span>Payment progress</span>
+            <span id="payPct">0% paid</span>
+          </div>
+          <div class="track"><i id="payBar"></i></div>
+        </div>
+      </section>
+
+      <!-- ---------- SUBMIT ---------- -->
+      <div class="form-foot">
+        <button type="submit" class="submit-btn" id="submitBtn">Save Diety Record</button>
       </div>
-
-      <div class="input-group">
-        <label for="mobile">Mobile Number</label>
-        <input type="tel" id="mobile" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" title="Please enter a valid 10-digit mobile number" required>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="dietyType">Diety Type</label>
-          <select id="dietyType" onchange="recalculateAll()" required>
-            <option value="ONE TIME">ONE TIME</option>
-            <option value="TWO TIME">TWO TIME</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <label for="status">Status</label>
-          <select id="status" required>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="dietyDays">Diety Days</label>
-          <input type="number" id="dietyDays" value="30" min="1" oninput="recalculateAll()" required>
-        </div>
-
-        <div class="input-group">
-          <label for="paymentMode">Payment Mode</label>
-          <select id="paymentMode" required>
-            <option value="UPI">UPI</option>
-            <option value="CASH">CASH</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="fromDate">From Date</label>
-          <input type="date" id="fromDate" onchange="recalculateAll()" required>
-        </div>
-
-        <div class="input-group">
-          <label for="toDate">To Date (Calculated)</label>
-          <input type="date" id="toDate" class="input-calc" readonly>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="totalDiets">Total Diets (Calculated)</label>
-          <input type="number" id="totalDiets" class="input-calc" readonly>
-        </div>
-
-        <div class="input-group">
-          <label for="totalAmount">Total Amount (₹)</label>
-          <input type="number" id="totalAmount" value="0" min="0" oninput="recalculateAll()" required>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="discountPercent">Discount (%)</label>
-          <input type="number" id="discountPercent" value="0" min="0" max="100" oninput="recalculateAll()">
-        </div>
-
-        <div class="input-group">
-          <label for="discountedAmount">Discounted Amount (₹)</label>
-          <input type="number" id="discountedAmount" class="input-calc" readonly>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="firstInstallment">1st Installment Paid (₹)</label>
-          <input type="number" id="firstInstallment" value="0" min="0" oninput="recalculateAll()">
-        </div>
-
-        <div class="input-group">
-          <label for="secondInstallment">2nd Installment Paid (₹)</label>
-          <input type="number" id="secondInstallment" value="0" min="0" oninput="recalculateAll()">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="input-group">
-          <label for="totalPaid">Total Paid (₹)</label>
-          <input type="number" id="totalPaid" class="input-calc" readonly>
-        </div>
-
-        <div class="input-group">
-          <label for="remainingAmount">Remaining Amount (₹)</label>
-          <input type="number" id="remainingAmount" class="input-rem" readonly>
-        </div>
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">Save Diety Record</button>
     </form>
 
   </div>
 
-  <script>
-    // URL of your Apps Script Web App
-    const DIETY_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxo_fgkx4kwNfod2o-wYki2bLuoJgpYXdq8s8Wkz6kldmnsnau2umQYf62amN2sgS9y/exec";
+<script>
+  // URL of your Apps Script Web App
+  const DIETY_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxo_fgkx4kwNfod2o-wYki2bLuoJgpYXdq8s8Wkz6kldmnsnau2umQYf62amN2sgS9y/exec";
 
-    // Set initial date
+  // Theme colours reused by the JS-driven mode tag
+  const TAG_NEW   = { bg: "rgba(242,163,65,.18)", fg: "#9a6412" };
+  const TAG_EDIT  = { bg: "rgba(47,125,93,.14)",  fg: "#1d5c43" };
+
+  // Set initial date
+  document.getElementById('fromDate').valueAsDate = new Date();
+  recalculateAll();
+
+  function setStatus(msg, type = "info") {
+    const elem = document.getElementById("statusMessage");
+    elem.innerHTML = msg;
+    elem.className = "status-" + type;
+    if (msg) {
+      setTimeout(() => elem.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
+    }
+  }
+
+  function paintModeTag(text, isEdit) {
+    const tag = document.getElementById('formModeTag');
+    tag.innerText = text;
+    const c = isEdit ? TAG_EDIT : TAG_NEW;
+    tag.style.background = c.bg;
+    tag.style.color = c.fg;
+  }
+
+  function recalculateAll() {
+    const fromDateVal = document.getElementById('fromDate').value;
+    const days = parseInt(document.getElementById('dietyDays').value, 10) || 0;
+
+    if (fromDateVal && days > 0) {
+      const d = new Date(fromDateVal);
+      d.setDate(d.getDate() + days - 1);
+      document.getElementById('toDate').valueAsDate = d;
+    }
+
+    const dietyType = document.getElementById('dietyType').value;
+    const multiplier = (dietyType === "TWO TIME") ? 2 : 1;
+    document.getElementById('totalDiets').value = days * multiplier;
+
+    const totalAmt = parseFloat(document.getElementById('totalAmount').value) || 0;
+    const discPct = parseFloat(document.getElementById('discountPercent').value) || 0;
+    const discAmt = totalAmt - (totalAmt * (discPct / 100));
+    document.getElementById('discountedAmount').value = discAmt.toFixed(2);
+
+    const inst1 = parseFloat(document.getElementById('firstInstallment').value) || 0;
+    const inst2 = parseFloat(document.getElementById('secondInstallment').value) || 0;
+    const totalPaid = inst1 + inst2;
+    document.getElementById('totalPaid').value = totalPaid.toFixed(2);
+
+    const remaining = discAmt - totalPaid;
+    const remEl = document.getElementById('remainingAmount');
+    remEl.value = remaining.toFixed(2);
+    remEl.classList.toggle('is-settled', remaining <= 0);
+
+    // ---- Payment progress bar ----
+    const pct = discAmt > 0 ? Math.min(100, Math.max(0, (totalPaid / discAmt) * 100)) : 0;
+    const bar = document.getElementById('payBar');
+    const pctLabel = document.getElementById('payPct');
+    if (bar) bar.style.width = pct.toFixed(1) + '%';
+    if (pctLabel) {
+      pctLabel.textContent = pct.toFixed(0) + '% paid'
+        + (discAmt > 0 && remaining <= 0 ? ' · settled' : '');
+    }
+  }
+
+  function resetFormToNew() {
+    document.getElementById('dietyForm').reset();
+    document.getElementById('custId').value = "";
+    document.getElementById('searchCustId').value = "";
     document.getElementById('fromDate').valueAsDate = new Date();
+    document.getElementById('status').value = "Active";
+    paintModeTag("New Record", false);
     recalculateAll();
+    setStatus("", "info");
+  }
 
-    function setStatus(msg, type = "info") {
-      const elem = document.getElementById("statusMessage");
-      elem.innerHTML = msg;
-      elem.className = "status-" + type;
+  async function fetchDietyRecord() {
+    const searchId = document.getElementById('searchCustId').value.trim();
+    if (!searchId) {
+      setStatus("Please enter a CUST_ID to search.", "error");
+      return;
     }
 
-    function recalculateAll() {
-      const fromDateVal = document.getElementById('fromDate').value;
-      const days = parseInt(document.getElementById('dietyDays').value, 10) || 0;
-      
-      if (fromDateVal && days > 0) {
-        const d = new Date(fromDateVal);
-        d.setDate(d.getDate() + days - 1);
-        document.getElementById('toDate').valueAsDate = d;
+    setStatus("Searching record…", "info");
+
+    try {
+      const res = await fetch(DIETY_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getDiety", custId: searchId })
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.record) {
+        const rec = data.record;
+        document.getElementById('custId').value = rec.custId;
+        document.getElementById('name').value = rec.name;
+        document.getElementById('mobile').value = rec.mobile;
+        document.getElementById('dietyType').value = rec.dietyType;
+        if (rec.status) document.getElementById('status').value = rec.status;
+        document.getElementById('dietyDays').value = rec.dietyDays;
+        if (rec.fromDate) document.getElementById('fromDate').value = rec.fromDate;
+        if (rec.toDate) document.getElementById('toDate').value = rec.toDate;
+        document.getElementById('totalAmount').value = rec.totalAmount;
+        document.getElementById('discountPercent').value = rec.discountPercent;
+        document.getElementById('firstInstallment').value = rec.firstInstallment;
+        document.getElementById('secondInstallment').value = rec.secondInstallment;
+        document.getElementById('paymentMode').value = rec.paymentMode;
+
+        paintModeTag("Editing CUST_ID: " + rec.custId, true);
+
+        recalculateAll();
+        setStatus("Record loaded successfully!", "success");
+      } else {
+        setStatus(data.message || "Record not found.", "error");
       }
-
-      const dietyType = document.getElementById('dietyType').value;
-      const multiplier = (dietyType === "TWO TIME") ? 2 : 1;
-      document.getElementById('totalDiets').value = days * multiplier;
-
-      const totalAmt = parseFloat(document.getElementById('totalAmount').value) || 0;
-      const discPct = parseFloat(document.getElementById('discountPercent').value) || 0;
-      const discAmt = totalAmt - (totalAmt * (discPct / 100));
-      document.getElementById('discountedAmount').value = discAmt.toFixed(2);
-
-      const inst1 = parseFloat(document.getElementById('firstInstallment').value) || 0;
-      const inst2 = parseFloat(document.getElementById('secondInstallment').value) || 0;
-      const totalPaid = inst1 + inst2;
-      document.getElementById('totalPaid').value = totalPaid.toFixed(2);
-
-      const remaining = discAmt - totalPaid;
-      document.getElementById('remainingAmount').value = remaining.toFixed(2);
+    } catch (err) {
+      setStatus("Failed to fetch record from server.", "error");
     }
+  }
 
-    function resetFormToNew() {
-      document.getElementById('dietyForm').reset();
-      document.getElementById('custId').value = "";
-      document.getElementById('searchCustId').value = "";
-      document.getElementById('fromDate').valueAsDate = new Date();
-      document.getElementById('status').value = "Active";
-      document.getElementById('formModeTag').innerText = "New Record";
-      document.getElementById('formModeTag').style.background = "rgba(245, 158, 11, 0.2)";
-      document.getElementById('formModeTag').style.color = "#f59e0b";
-      recalculateAll();
-      setStatus("", "info");
-    }
+  async function handleDietySubmit(e) {
+    e.preventDefault();
 
-    async function fetchDietyRecord() {
-      const searchId = document.getElementById('searchCustId').value.trim();
-      if (!searchId) {
-        setStatus("Please enter a CUST_ID to search.", "error");
-        return;
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    setStatus("Saving record…", "info");
+
+    const payload = {
+      action: "saveDiety",
+      custId: document.getElementById('custId').value,
+      name: document.getElementById('name').value.trim(),
+      mobile: document.getElementById('mobile').value.trim(),
+      dietyType: document.getElementById('dietyType').value,
+      status: document.getElementById('status').value,
+      dietyDays: document.getElementById('dietyDays').value,
+      fromDate: document.getElementById('fromDate').value,
+      toDate: document.getElementById('toDate').value,
+      totalAmount: document.getElementById('totalAmount').value,
+      discountPercent: document.getElementById('discountPercent').value,
+      firstInstallment: document.getElementById('firstInstallment').value,
+      secondInstallment: document.getElementById('secondInstallment').value,
+      paymentMode: document.getElementById('paymentMode').value
+    };
+
+    try {
+      const res = await fetch(DIETY_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      submitBtn.disabled = false;
+
+      if (data.success) {
+        const successMsg =
+          `✅ Record saved successfully!<br><strong>Name:</strong> ${data.name}<br>` +
+          `<span class="cust-badge">CUST_ID: ${data.custId}</span>`;
+        setStatus(successMsg, "success");
+
+        // Switch form to edit mode for the saved record
+        document.getElementById('custId').value = data.custId;
+        paintModeTag("Editing CUST_ID: " + data.custId, true);
+      } else {
+        setStatus(data.message || "Failed to save record.", "error");
       }
-
-      setStatus("Searching record...", "info");
-
-      try {
-        const res = await fetch(DIETY_SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "getDiety", custId: searchId })
-        });
-
-        const data = await res.json();
-
-        if (data.success && data.record) {
-          const rec = data.record;
-          document.getElementById('custId').value = rec.custId;
-          document.getElementById('name').value = rec.name;
-          document.getElementById('mobile').value = rec.mobile;
-          document.getElementById('dietyType').value = rec.dietyType;
-          if (rec.status) document.getElementById('status').value = rec.status;
-          document.getElementById('dietyDays').value = rec.dietyDays;
-          if (rec.fromDate) document.getElementById('fromDate').value = rec.fromDate;
-          if (rec.toDate) document.getElementById('toDate').value = rec.toDate;
-          document.getElementById('totalAmount').value = rec.totalAmount;
-          document.getElementById('discountPercent').value = rec.discountPercent;
-          document.getElementById('firstInstallment').value = rec.firstInstallment;
-          document.getElementById('secondInstallment').value = rec.secondInstallment;
-          document.getElementById('paymentMode').value = rec.paymentMode;
-
-          document.getElementById('formModeTag').innerText = "Editing CUST_ID: " + rec.custId;
-          document.getElementById('formModeTag').style.background = "rgba(59, 130, 246, 0.2)";
-          document.getElementById('formModeTag').style.color = "#60a5fa";
-
-          recalculateAll();
-          setStatus("Record loaded successfully!", "success");
-        } else {
-          setStatus(data.message || "Record not found.", "error");
-        }
-      } catch (err) {
-        setStatus("Failed to fetch record from server.", "error");
-      }
+    } catch (err) {
+      submitBtn.disabled = false;
+      setStatus("Network or server error.", "error");
     }
-
-    async function handleDietySubmit(e) {
-      e.preventDefault();
-
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.disabled = true;
-      setStatus("Saving record...", "info");
-
-      const payload = {
-        action: "saveDiety",
-        custId: document.getElementById('custId').value,
-        name: document.getElementById('name').value.trim(),
-        mobile: document.getElementById('mobile').value.trim(),
-        dietyType: document.getElementById('dietyType').value,
-        status: document.getElementById('status').value,
-        dietyDays: document.getElementById('dietyDays').value,
-        fromDate: document.getElementById('fromDate').value,
-        toDate: document.getElementById('toDate').value,
-        totalAmount: document.getElementById('totalAmount').value,
-        discountPercent: document.getElementById('discountPercent').value,
-        firstInstallment: document.getElementById('firstInstallment').value,
-        secondInstallment: document.getElementById('secondInstallment').value,
-        paymentMode: document.getElementById('paymentMode').value
-      };
-
-      try {
-        const res = await fetch(DIETY_SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        submitBtn.disabled = false;
-
-        if (data.success) {
-          const successMsg = `✅ Record Saved Successfully!<br><strong>Name:</strong> ${data.name}<br><span class="cust-badge">CUST_ID: ${data.custId}</span>`;
-          setStatus(successMsg, "success");
-          
-          // Switch form to edit mode for the saved record
-          document.getElementById('custId').value = data.custId;
-          document.getElementById('formModeTag').innerText = "Editing CUST_ID: " + data.custId;
-        } else {
-          setStatus(data.message || "Failed to save record.", "error");
-        }
-      } catch (err) {
-        submitBtn.disabled = false;
-        setStatus("Network or server error.", "error");
-      }
-    }
-  </script>
+  }
+</script>
 </body>
 </html>
